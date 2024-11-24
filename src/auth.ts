@@ -2,13 +2,6 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  // secret: process.env.AUTH_SECRET,
-  // session: {
-  //   strategy: "jwt" as any, // Verwenden von `any` für den Session-Strategietyp
-  // },
-  pages: {
-    signIn: "/auth/sign-in", // benutzerdefinierte Anmeldeseite
-  },
   providers: [
     CredentialsProvider({
       // name: "credentials",
@@ -36,14 +29,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             }
           );
 
-          const user = await response.json();
+          const data = await response.json();
+          const user = data.user;
 
-          if (response.ok && user) {
+          if (response.ok && data) {
             return {
               id: user.id,
               username: user.username,
-              role: user.role,
-              token: user.token, // Access Token
+              // role: user.role,
+              token: data.token, // Access Token
             };
           }
           return null;
@@ -58,17 +52,30 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     authorized({ request, auth }: any) {
       return !!auth; // überprüft, ob der Benutzer authentifiziert ist
     },
-    async jwt({ token, user }: any) {
+    async jwt({ token, user, trigger }: any) {
+      if (trigger === "signIn") {
+      }
       if (user) {
+        token.username = user.username; // Hier der `username` zum Token
         // Das accessToken wird in das JWT-Token aufgenommen
         token.accessToken = user.token;
       }
       return token;
     },
     async session({ session, token }: any) {
-      // Das accessToken wird der Sitzung hinzugefügt
+      console.log("session log: ", token);
+
+      // Setze die gewünschten Daten in die Session
+      session.user = {
+        ...session.user, // Behalte bestehende Felder wie `email` oder `image`
+        id: token.id,
+        username: token.username,
+        email: token.email,
+        profileImage: token.profileImage,
+      };
       session.accessToken = token.accessToken;
-      return session;
+
+      return session; // Gib das Session-Objekt korrekt zurück
     },
   },
 });

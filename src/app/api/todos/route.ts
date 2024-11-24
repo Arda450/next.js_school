@@ -22,3 +22,9 @@ export async function DELETE(request: Request) {
   // Füge hier die Logik zum Löschen eines To-Dos hinzu
   return NextResponse.json({ message: "To-Do deleted" });
 }
+
+// in der homepage sollte die todo erstellbar sein
+// muss noch ergänzt werden
+
+// hier werden nur die todo read und create funcs sein
+// muss noch gemacht werden

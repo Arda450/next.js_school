@@ -9,15 +9,26 @@ import { signInSchema, signUpSchema } from "@/lib/zod";
 import { AuthError } from "next-auth";
 import { revalidatePath } from "next/cache";
 
-export const logout = async (prevState: any, formData: FormData) => {
+export const logout = async () => {
   try {
-    await signOut();
-  } catch (e) {
-    throw e;
+    /** Dadurch wird vermieden, dass next-auth versucht, einen Redirect automatisch durchzuführen.
+     * Du kannst anschließend den Redirect manuell steuern.
+     */
+    await signOut({ redirect: false });
+    return {
+      status: "success",
+      message: "Logged out successfully",
+    };
+  } catch (error) {
+    console.error("Logout failed", error);
+    return {
+      status: "error",
+      error: "Logout failed",
+    };
   }
 };
 
-export const login = async (formData: FormData) => {
+export const login = async (prevState: any, formData: FormData) => {
   const result = signInSchema.safeParse(Object.fromEntries(formData));
 
   if (!result.success) {
@@ -28,29 +39,11 @@ export const login = async (formData: FormData) => {
   }
 
   try {
-    // Sende Login-Anfrage an das Backend
-    const response = await fetch(`${process.env.BACKEND_URL}/api/auth/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: formData.get("email"),
-        password: formData.get("password"),
-      }),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      return { status: "error", error: data.message || "Login failed" };
-    }
-
     // Wenn der Login erfolgreich ist, den Benutzer anmelden
     await signIn("credentials", {
       email: formData.get("email"),
       password: formData.get("password"),
-      redirectTo: "/dashboard",
+      redirectTo: "/protected",
     });
   } catch (error) {
     if (error instanceof AuthError) {
@@ -63,15 +56,25 @@ export const login = async (formData: FormData) => {
     }
     throw error;
   }
-
+  // die daten auf der seite löschen und wieder fetchen
   revalidatePath("/");
 };
 
-export const register = async (formData: FormData) => {
+// ###################################################################
+
+export const register = async (prevState: any, formData: FormData) => {
+  // if (!formData) {
+  //   return { status: "error", error: "No data provided" };
+  // }
   // fetch the backend here
   console.log(process.env.BACKEND_URL);
   console.log("register triggered");
-  const result = signUpSchema.safeParse(Object.fromEntries(formData));
+  console.log("formData");
+  // Statt FormData in ein Array umzuwandeln, mache dies direkt im Frontend.
+  const formDataObject = Object.fromEntries(formData);
+
+  // Validierung der Formulardaten
+  const result = signUpSchema.safeParse(formDataObject);
 
   if (!result.success) {
     return {
@@ -88,31 +91,44 @@ export const register = async (formData: FormData) => {
         "Content-Type": "application/json",
       },
       // Hier würdest du den Benutzer im Backend registrieren
-      body: JSON.stringify({
-        username: formData.get("username"),
-        email: formData.get("email"),
-        password: formData.get("password"),
-      }),
+      // Hier sendest du das JSON-Objekt
+      body: JSON.stringify(formDataObject),
     });
 
-    console.log(response.status);
-    if (response.status !== 201) {
-      return { status: "error", error: "Registration failed" };
-    }
     const data = await response.json();
-    console.log(data);
-    if (!response.ok) {
-      const data = await response.json(); // fehlerbehandlung
-      return { status: "error", error: data.message || "Registration failed" };
+
+    if (response.status === 201) {
+      return {
+        status: "success",
+        message: "Registration successful. Please login.",
+      };
     }
 
-    return { status: "success", user: data };
-  } catch (error) {
-    console.log("in catch");
-    console.log(error);
-    if (error instanceof AuthError) {
-      return { status: "error", error: "Failed to register" };
+    switch (response.status) {
+      case 400:
+        return {
+          status: "error",
+          error: data.message || "Invalid input data.",
+        };
+      case 409:
+        return {
+          status: "error",
+          error: data.message || "User with the provided email already exists.",
+        };
+      case 422:
+        console.log(data);
+        return { status: "error", errors: data.errors };
+      default: // 500er Codes etc. werden hier angezeigt
+        return {
+          status: "error",
+          error: "Internal server error. Please try again later.",
+        };
     }
-    throw error;
+  } catch (error) {
+    console.error("Catch Block Error:", error);
+    return {
+      status: "error",
+      error: "An unexpected error occurred.",
+    };
   }
 };

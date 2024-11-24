@@ -1,83 +1,64 @@
 "use client";
 
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, FormField } from "../ui/form";
 import { Input } from "../ui/input";
 import { FormInput } from "./form-input";
-import { Button } from "../ui/button";
 import { FormContext } from "@/types/enums/form-context";
-import { signIn } from "next-auth/react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { signInSchema } from "@/lib/zod";
+import { useEffect } from "react";
+import { login } from "@/actions/auth-actions";
+import { useActionState } from "react";
+import { useFormStatus } from "react-dom";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 
 interface LoginFormProps {
   setFormContext: (context: FormContext) => void;
 }
 
-export const LoginForm = ({ setFormContext }: LoginFormProps) => {
-  const router = useRouter();
-  const form = useForm<z.infer<typeof signInSchema>>({
-    resolver: zodResolver(signInSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-    mode: "onSubmit",
-    reValidateMode: "onBlur",
-  });
+export default function LoginForm({ setFormContext }: LoginFormProps) {
+  const [state, loginAction] = useActionState(login, undefined);
 
-  const { errors } = form.formState;
-
-  async function onSubmit(values: z.infer<typeof signInSchema>) {
-    // we define here, that we will use next-auth's handleLogin
-    // the handleLogin function of next-auth is called signIn()
-    const result = await signIn("credentials", {
-      redirect: false, // prevents the automatic redirect
-      email: values.email,
-      password: values.password,
-    });
-
-    if (result?.error) {
-      toast.error(result.error, { position: "bottom-center" });
-    } else {
-      toast.success("Login successful", { position: "bottom-center" });
-      router.push("/authenticated/todos");
-    }
-  }
+  useEffect(() => {
+    console.log(state);
+  }, [state]);
 
   return (
-    <div className="flex flex-col w-full">
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col w-full gap-6"
-        >
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormInput errors={errors}>
-                <Input placeholder="Email" {...field} />
-              </FormInput>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormInput errors={errors}>
-                <Input type="password" placeholder="Password" {...field} />
-              </FormInput>
-            )}
-          />
-          <Button type="submit" size="lg">
-            Login
-          </Button>
-        </form>
-      </Form>
+    <form className="flex flex-col gap-2" action={loginAction}>
+      {state?.status === "error" && (
+        <div className="flex flex-col text-red-500 text-sm">
+          {state.error && <span>{state.error}</span>}
+          {state.errors?.email?.map((err: string, index: number) => (
+            <span key={index}>{err}</span>
+          ))}
+          {state.errors?.password?.map((err: string, index: number) => (
+            <span key={index}>{err}</span>
+          ))}
+        </div>
+      )}
+      <div>
+        <Label htmlFor="email">Email</Label>
+        <Input
+          className={`${
+            state?.errors?.email ? " outline outline-red-500 outline-1" : ""
+          }`}
+          autoFocus
+          id="email"
+          name="email"
+        />
+      </div>
+      <div>
+        <Label htmlFor="password">Password</Label>
+        <Input
+          className={
+            state?.errors?.password ? "outline outline-red-500 outline-1" : ""
+          }
+          id="password"
+          type="password"
+          name="password"
+        />
+      </div>
+      <SubmitButton />
       <p className="mt-4 self-end">
         Need an account?
         <span
@@ -87,6 +68,15 @@ export const LoginForm = ({ setFormContext }: LoginFormProps) => {
           Register now
         </span>
       </p>
-    </div>
+    </form>
   );
-};
+}
+function SubmitButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button disabled={pending} type="submit">
+      Login
+    </Button>
+  );
+}
