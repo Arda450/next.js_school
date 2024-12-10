@@ -1,22 +1,32 @@
-import { Footer } from "@/components/footer/footer";
-import { Header } from "@/components/header/header";
+import { AppSidebar } from "@/components/app-sidebar";
+
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { auth } from "@/auth";
+import Header from "@/components/header/header";
 
 // app/authenticated/layout.tsx
-export default function AuthenticatedLayout({
+export default async function AuthenticatedLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await auth();
   return (
-    <div className="min-h-screen flex flex-col">
-      <header>
-        <Header />
-      </header>
-      <div className="flex-grow px-16 py-10">
-        <main>{children}</main>
-      </div>
-
-      <Footer></Footer>
+    <div className="min-h-screen flex main-layout">
+      <SidebarProvider>
+        <div className="sidebar">
+          <AppSidebar />
+        </div>
+        <div className="content flex-grow">
+          <header>
+            <Header username={session?.user?.username} />
+          </header>
+          <main>{children}</main>
+        </div>
+      </SidebarProvider>
+      <footer></footer>
     </div>
   );
 }
+
+// npm zustand installieren

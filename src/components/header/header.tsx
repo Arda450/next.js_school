@@ -1,28 +1,34 @@
 "use client";
 
-import { logout } from "@/actions/auth-actions";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { Separator } from "@/components/ui/separator";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
-export const Header = () => {
-  const router = useRouter();
-
-  const handleLogout = async () => {
-    try {
-      await logout(); // Die zentrale Logout-Funktion mit Umleitung
-      router.push("/");
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
-  };
-
+export default function Header({ username }: { username?: string }) {
   return (
-    <header className="border-b border-black w-full h-20 px-16 flex items-center justify-between">
-      <Link href={"/"}>Logo</Link>
-      <div className="flex items-center gap-6">
-        <Link href={"/profile"}>Profile</Link>
-        <button onClick={handleLogout}>Logout</button>
+    <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+      <SidebarTrigger className="ml-4 " />
+      <div className="flex items-center gap-2 px-4">
+        <Separator orientation="vertical" className="mr-2 h-4 " />
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem className="hidden md:block ">
+              <BreadcrumbLink>Welcome, {username || "Guest"}</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator className="hidden md:block" />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Your Todos</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
       </div>
     </header>
   );
-};
+}

@@ -2,24 +2,18 @@
 import { z } from "zod";
 
 export const signInSchema = z.object({
-  email: z
-    .string({ required_error: "Email is required" })
-    .email("Please enter a valid email address."),
-  password: z
-    .string({ required_error: "Password is required" })
-    .min(6, "Password must be at least 6 characters"),
+  email: z.string().email(),
+  password: z.string().min(6, "Password must contain at least 6 characters"),
 });
 
 export const signUpSchema = z
   .object({
     username: z
-      .string({ required_error: "Username is required" })
-      .min(1, "Username required")
-      .max(20, "Username can be max. 20 chars"),
+      .string()
+      .min(1, "Username is required")
+      .max(20, "Username must contain at most 20 characters"),
 
-    email: z
-      .string({ required_error: "Email is required" })
-      .email("Invalid email"),
+    email: z.string().email("Invalid email"),
 
     password: z
       .string({ required_error: "Password is required" })
@@ -34,3 +28,8 @@ export const signUpSchema = z
     path: ["password_confirmation"],
     message: "Passwords don't match",
   });
+
+export const todoSchema = z.object({
+  title: z.string().min(1).max(30),
+  description: z.string().min(5).max(100),
+});

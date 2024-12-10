@@ -1,6 +1,8 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
+// hier wird der Token aus dem backend nach erfolgreichem login gespeichert und in den api anfragen verwendet
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     CredentialsProvider({
@@ -15,7 +17,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
           // Anfrage an das Backend zur Authentifizierung
           const response = await fetch(
-            `${process.env.BACKEND_URL}/api/auth/login`,
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/login`,
             {
               method: "POST",
               headers: {
@@ -36,7 +38,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             return {
               id: user.id,
               username: user.username,
-              // role: user.role,
+              email: user.email,
               token: data.token, // Access Token
             };
           }
@@ -52,18 +54,22 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     authorized({ request, auth }: any) {
       return !!auth; // überprüft, ob der Benutzer authentifiziert ist
     },
+
+    // der Token wird in den JWT-Callback eingefügt. Das ermöglicht, den Token in der Middleware oder Session zu verwenden.
     async jwt({ token, user, trigger }: any) {
+      //console.log("JWT Token:", token);
+
       if (trigger === "signIn") {
       }
       if (user) {
         token.username = user.username; // Hier der `username` zum Token
-        // Das accessToken wird in das JWT-Token aufgenommen
+        token.email = user.email;
         token.accessToken = user.token;
       }
       return token;
     },
     async session({ session, token }: any) {
-      console.log("session log: ", token);
+      //console.log("session log: ", token);
 
       // Setze die gewünschten Daten in die Session
       session.user = {

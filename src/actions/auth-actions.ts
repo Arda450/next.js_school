@@ -67,7 +67,7 @@ export const register = async (prevState: any, formData: FormData) => {
   //   return { status: "error", error: "No data provided" };
   // }
   // fetch the backend here
-  console.log(process.env.BACKEND_URL);
+  console.log(process.env.NEXT_PUBLIC_BACKEND_URL);
   console.log("register triggered");
   console.log("formData");
   // Statt FormData in ein Array umzuwandeln, mache dies direkt im Frontend.
@@ -85,15 +85,18 @@ export const register = async (prevState: any, formData: FormData) => {
 
   try {
     // Sende Registrierungsanfrage an das Backend
-    const response = await fetch(`${process.env.BACKEND_URL}/api/register`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      // Hier würdest du den Benutzer im Backend registrieren
-      // Hier sendest du das JSON-Objekt
-      body: JSON.stringify(formDataObject),
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/register`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        // Hier würdest du den Benutzer im Backend registrieren
+        // Hier sendest du das JSON-Objekt
+        body: JSON.stringify(formDataObject),
+      }
+    );
 
     const data = await response.json();
 

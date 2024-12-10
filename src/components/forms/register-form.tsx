@@ -24,7 +24,10 @@ export default function RegisterForm({ setFormContext }: RegisterFormProps) {
   const router = useRouter();
 
   useEffect(() => {
-    if (state?.status === "success" && state?.redirect) {
+    if (
+      state?.status === "success"
+      // && state?.redirect
+    ) {
       console.log("Redirecting to /login");
     }
     console.log(state);

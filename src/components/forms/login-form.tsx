@@ -1,16 +1,14 @@
 "use client";
 
 import { Input } from "../ui/input";
-import { FormInput } from "./form-input";
 import { FormContext } from "@/types/enums/form-context";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { login } from "@/actions/auth-actions";
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 interface LoginFormProps {
   setFormContext: (context: FormContext) => void;
@@ -19,12 +17,25 @@ interface LoginFormProps {
 export default function LoginForm({ setFormContext }: LoginFormProps) {
   const [state, loginAction] = useActionState(login, undefined);
 
+  const handleLoginAction = (formData: FormData) => {
+    toast.promise(
+      async () => {
+        loginAction(formData);
+      },
+      {
+        loading: "Logging in...",
+        success: "Logged in successfully!",
+        error: "Failed to log in.",
+      }
+    );
+  };
+
   useEffect(() => {
     console.log(state);
   }, [state]);
 
   return (
-    <form className="flex flex-col gap-2" action={loginAction}>
+    <form className="flex flex-col gap-2" action={handleLoginAction}>
       {state?.status === "error" && (
         <div className="flex flex-col text-red-500 text-sm">
           {state.error && <span>{state.error}</span>}
