@@ -21,6 +21,7 @@ import {
 import { CaretSortIcon, ComponentPlaceholderIcon } from "@radix-ui/react-icons";
 import { logout } from "@/actions/auth-actions"; // Importiere die Logout-Funktion
 import { useRouter } from "next/navigation"; // Importiere useRouter
+import Link from "next/link";
 
 export function NavUser({
   user,
@@ -32,7 +33,6 @@ export function NavUser({
   };
 }) {
   const { isMobile } = useSidebar();
-
   const router = useRouter(); // Router für Navigation
 
   const handleLogout = async () => {
@@ -55,7 +55,7 @@ export function NavUser({
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <AvatarFallback className="rounded-lg">Avatar</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">{user.name}</span>
@@ -92,8 +92,10 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <BadgeCheck />
-                Profile
+                <Link href="/protected/settings/profile" className="flex">
+                  <BadgeCheck className="mr-2 h-4 w-4" />
+                  Profile
+                </Link>
               </DropdownMenuItem>
 
               <DropdownMenuItem>

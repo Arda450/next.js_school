@@ -1,101 +1,81 @@
-// // hier werden die todos gefetcht und dann weiter in die protected/ page.tsx weitergegeben
+"use client";
 
-// async function getTodos() {
-//   const response = await fetch(`${process.env.BACKEND_URL}/api/todos`, {
-//     cache: "no-store",
-//   });
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/card";
+import EditTodoForm from "@/components/forms/edit-todo-form";
+import { useState } from "react";
 
-//   if (!response.ok) {
-//     return {
-//       status: "error",
-//       todos: [],
-//       errors: "Fehler beim Abrufen der Todos",
-//     };
-//   }
-
-//   export default async function TodoList() {
-//     const todos = await getTodos();
-
-//     return (
-//       <div className="space-y-4">
-//         {todos.map(
-//           (todo: { id: number; title: string; description: string }) => (
-//             <div key={todo.id} className="border p-4 rounded shadow">
-//               <h2 className="text-lg font-semibold">{todo.title}</h2>
-//               <p>{todo.description}</p>
-//             </div>
-//           )
-//         )}
-//       </div>
-//     );
-//   }
-// }
-
-async function getTodos(session: any) {
-  try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/todos`,
-      {
-        cache: "no-store",
-        headers: {
-          Authorization: `Bearer ${session?.accessToken}`, // Token von der Session verwenden
-        },
-      }
-    );
-
-    // console.log(Error);
-
-    if (!response.ok) {
-      console.log(response.status);
-      // Fehlerhafte Antwort: Gib eine leere Todo-Liste und eine Standardmeldung zurück
-      return {
-        status: "error",
-        todos: [],
-        message: "Fehler beim Abrufen der Todos oder keine Todos",
-      };
-    }
-
-    const data = await response.json();
-    return {
-      status: "success",
-      todos: data.todos || [],
-      message: "",
-    };
-  } catch (error) {
-    // Netzwerkfehler oder andere Fehler abfangen
-    return {
-      status: "error",
-      todos: [],
-      message: "Ein unerwarteter Fehler ist aufgetreten",
-    };
-  }
+interface Todo {
+  id: number;
+  title: string;
+  description: string;
 }
 
 interface TodoListProps {
-  session: any; // Typen anpassen
+  todos: Todo[];
+  session: any;
 }
 
-export default async function TodoList({ session }: TodoListProps) {
-  const { status, todos, message } = await getTodos(session);
+export default function TodoList({ todos, session }: TodoListProps) {
+  const [open, setOpen] = useState(false);
+  const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
+
+  const handleTodoClick = (todo: Todo) => {
+    setSelectedTodo(todo);
+    setOpen(true);
+  };
 
   return (
-    <div className="space-y-4">
-      {status === "error" && (
-        <div className="text-red-500 font-semibold">{message}</div>
-      )}
+    <>
+      <div className="grid gap-6 max-w-3xl mx-auto">
+        {todos.map((todo) => (
+          <Card
+            key={todo.id}
+            className="hover:shadow-lg transition-shadow cursor-pointer"
+            onClick={() => handleTodoClick(todo)}
+          >
+            <CardHeader>
+              <CardTitle>{todo.title}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <CardDescription>{todo.description}</CardDescription>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
 
-      {todos.length > 0
-        ? todos.map(
-            (todo: { id: number; title: string; description: string }) => (
-              <div key={todo.id} className="border p-4 rounded shadow">
-                <h2 className="text-lg font-semibold">{todo.title}</h2>
-                <p>{todo.description}</p>
-              </div>
-            )
-          )
-        : status !== "error" && (
-            <div className="text-gray-500">Keine Todos vorhanden.</div>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Todo bearbeiten</DialogTitle>
+            <DialogDescription>
+              Bearbeiten Sie die Details Ihres Todos hier.
+            </DialogDescription>
+          </DialogHeader>
+          {selectedTodo && (
+            <EditTodoForm
+              todo={selectedTodo}
+              session={session}
+              onClose={() => {
+                setOpen(false);
+                setSelectedTodo(null);
+              }}
+            />
           )}
-    </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

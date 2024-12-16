@@ -83,8 +83,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Update a todo
-export async function PUT(request: Request) {
+export async function PATCH(request: Request) {
   const session = await auth();
   if (!session?.accessToken) {
     return NextResponse.json(
@@ -93,30 +92,40 @@ export async function PUT(request: Request) {
     );
   }
 
-  const id = request.url.split("/").pop();
-  if (!id) {
+  try {
+    const body = await request.json();
+    console.log("Request body:", body); // Debug-Log
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/todos`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${session.accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      }
+    );
+
+    const responseData = await response.json();
+    console.log("Backend response:", responseData); // Debug-Log
+
+    if (!response.ok) {
+      throw new Error(responseData.message || "Backend error");
+    }
+
+    return NextResponse.json(responseData);
+  } catch (error) {
+    console.error("Update error:", error); // Debug-Log
     return NextResponse.json(
-      { message: "Invalid ID provided" },
-      { status: 400 }
+      {
+        message: error instanceof Error ? error.message : "Error updating todo",
+        details: error instanceof Error ? error.stack : undefined,
+      },
+      { status: 500 }
     );
   }
-
-  const body = await request.json();
-
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/todos/${id}`,
-    {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${session.accessToken}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-    }
-  );
-
-  const data = await response.json();
-  return NextResponse.json(data);
 }
 
 // Delete a todo

@@ -1,7 +1,6 @@
 // // Läuft auf der Client Seite
 "use client";
 
-import { FormInput } from "./form-input";
 import { register } from "@/actions/auth-actions";
 import { FormContext } from "@/types/enums/form-context";
 
@@ -23,15 +22,13 @@ export default function RegisterForm({ setFormContext }: RegisterFormProps) {
   const [state, registerAction] = useActionState(register, undefined);
   const router = useRouter();
 
+  // useEffect achtet auf state und setFormContext
   useEffect(() => {
-    if (
-      state?.status === "success"
-      // && state?.redirect
-    ) {
-      console.log("Redirecting to /login");
+    if (state?.status === "success") {
+      setFormContext(FormContext.LOGIN);
     }
     console.log(state);
-  }, [state, router]);
+  }, [state, setFormContext]);
 
   return (
     <form className="flex flex-col gap-2" action={registerAction}>
@@ -104,7 +101,7 @@ export default function RegisterForm({ setFormContext }: RegisterFormProps) {
       <SubmitButton />
 
       <p className="mt-4 self-end">
-        Already got an account?
+        Already have an account?
         <span
           onClick={() => setFormContext(FormContext.LOGIN)}
           className="font-semibold ml-2 cursor-pointer"

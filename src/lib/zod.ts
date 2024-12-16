@@ -30,6 +30,9 @@ export const signUpSchema = z
   });
 
 export const todoSchema = z.object({
-  title: z.string().min(1).max(30),
-  description: z.string().min(5).max(100),
+  title: z.string().min(1, "Titel ist erforderlich").max(200),
+  description: z.string().min(1, "Beschreibung ist erforderlich").max(20000),
+  status: z.enum(["open", "doing", "completed"]).default("open"),
 });
+
+export type TodoFormValues = z.infer<typeof todoSchema>;

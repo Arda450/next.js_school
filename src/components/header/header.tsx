@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import Link from "next/link";
 
 export default function Header({ username }: { username?: string }) {
   return (

@@ -40,7 +40,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       {
         name: "Todo Stream",
         logo: GalleryVerticalEnd,
-        plan: "Enterprise",
+        plan: "Your Todo App",
       },
       {
         name: "Acme Corp.",
