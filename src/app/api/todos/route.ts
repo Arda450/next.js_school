@@ -4,28 +4,37 @@ import { auth } from "@/auth";
 // export default async function handler() {
 // Fetch all todos
 export async function GET() {
-  // Überprüfung, ob der Benutzer authentifiziert ist.
-  const session = await auth(); // Session abrufen
-
-  if (!session?.accessToken) {
+  try {
+    // Authentifizierung wird überprüft
+    const session = await auth();
+    if (!session?.accessToken) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+    // Anfrage wird an das Backend gesendet
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/todos`,
+      {
+        headers: {
+          Authorization: `Bearer ${session.accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    // Auf Fehler prüfen
+    if (!response.ok) {
+      throw new Error("Backend request failed");
+    }
+    // Daten werden zurückgegeben
+    const data = await response.json();
+    return NextResponse.json(data);
+  } catch (error) {
+    console.error("API error:", error);
+    // Fehlerbehandlung
     return NextResponse.json(
-      { message: "Unauthorized: No token found" },
-      { status: 401 }
+      { message: "Internal Server Error" },
+      { status: 500 }
     );
   }
-
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/todos`,
-    {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${session.accessToken}`,
-      },
-    }
-  );
-
-  const data = await response.json();
-  return NextResponse.json(data);
 }
 
 // Create a new todo
@@ -104,7 +113,12 @@ export async function PATCH(request: Request) {
           Authorization: `Bearer ${session.accessToken}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(body),
+        body: JSON.stringify({
+          id: body.id,
+          title: body.title,
+          description: body.description,
+          status: body.status || "open",
+        }),
       }
     );
 
@@ -112,54 +126,15 @@ export async function PATCH(request: Request) {
     console.log("Backend response:", responseData); // Debug-Log
 
     if (!response.ok) {
-      throw new Error(responseData.message || "Backend error");
+      return NextResponse.json(responseData, { status: response.status });
     }
 
     return NextResponse.json(responseData);
   } catch (error) {
-    console.error("Update error:", error); // Debug-Log
+    console.error("Update error:", error);
     return NextResponse.json(
-      {
-        message: error instanceof Error ? error.message : "Error updating todo",
-        details: error instanceof Error ? error.stack : undefined,
-      },
+      { message: "Internal Server Error" },
       { status: 500 }
     );
   }
-}
-
-// Delete a todo
-export async function DELETE(request: Request) {
-  const session = await auth();
-  if (!session?.accessToken) {
-    return NextResponse.json(
-      { message: "Unauthorized: No token found" },
-      { status: 401 }
-    );
-  }
-
-  const id = request.url.split("/").pop();
-  if (!id) {
-    return NextResponse.json(
-      { message: "Invalid ID provided" },
-      { status: 400 }
-    );
-  }
-
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/todos/${id}`,
-    {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${session.accessToken}`,
-      },
-    }
-  );
-
-  if (response.ok) {
-    return NextResponse.json({ message: "To-Do deleted successfully" });
-  }
-
-  const data = await response.json();
-  return NextResponse.json(data, { status: response.status });
 }

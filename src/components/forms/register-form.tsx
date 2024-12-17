@@ -12,7 +12,7 @@ import { useEffect } from "react";
 // import { useFormState, useFormStatus } from "react-dom";
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
-import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 interface RegisterFormProps {
   setFormContext: (context: FormContext) => void;
@@ -20,18 +20,24 @@ interface RegisterFormProps {
 
 export default function RegisterForm({ setFormContext }: RegisterFormProps) {
   const [state, registerAction] = useActionState(register, undefined);
-  const router = useRouter();
 
-  // useEffect achtet auf state und setFormContext
   useEffect(() => {
     if (state?.status === "success") {
+      toast.success("Registration successful! Please log in.");
       setFormContext(FormContext.LOGIN);
     }
-    console.log(state);
+    if (state?.status === "error") {
+      toast.error(state.error || "Registration failed");
+    }
   }, [state, setFormContext]);
 
+  // handleRegister ist die Funktion, die aufgerufen wird, wenn das Formular abgeschickt wird
+  const handleRegister = (formData: FormData) => {
+    registerAction(formData);
+  };
+
   return (
-    <form className="flex flex-col gap-2" action={registerAction}>
+    <form className="flex flex-col gap-2" action={handleRegister}>
       {state?.status === "error" && (
         <div className="flex flex-col text-red-500 text-sm">
           {state.errors?.username &&

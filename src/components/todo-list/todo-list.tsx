@@ -16,27 +16,32 @@ import {
 } from "@/components/ui/card";
 import EditTodoForm from "@/components/forms/edit-todo-form";
 import { useState } from "react";
+import { useTodos } from "@/components/todos/TodoContext";
+import { useEffect } from "react";
+import { Todo, TodoListProps } from "@/types/todo";
 
-interface Todo {
-  id: number;
-  title: string;
-  description: string;
-}
-
-interface TodoListProps {
-  todos: Todo[];
-  session: any;
-}
-
-export default function TodoList({ todos, session }: TodoListProps) {
-  const [open, setOpen] = useState(false);
+// Listet alle Todos auf und öffnet das Formular zum bearbeiten und löschen
+// Die Todos werden aus dem TodoContext geholt (todos im useTodos) und in den state gesetzt
+export default function TodoList({ session }: Omit<TodoListProps, "todos">) {
+  // Zeigt die Todos an mittels useTodos vom TodoContext
+  const { todos, refreshTodos } = useTodos();
+  const [showTodoDialog, setShowTodoDialog] = useState(false);
   const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
 
+  // der useEffect-hook wird verwendet
+
+  useEffect(() => {
+    refreshTodos();
+  }, [refreshTodos]);
+
+  /* Beim Clicken auf ein Todo, wird es als selectedTodo gesetzt und das Dialog wird geöffnet,
+  der das EditTodoForm lädt */
   const handleTodoClick = (todo: Todo) => {
     setSelectedTodo(todo);
-    setOpen(true);
+    setShowTodoDialog(true);
   };
 
+  // Jede Todo wird in eine Card gepackt und in der Liste angezeigt
   return (
     <>
       <div className="grid gap-6 max-w-3xl mx-auto">
@@ -56,20 +61,19 @@ export default function TodoList({ todos, session }: TodoListProps) {
         ))}
       </div>
 
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={showTodoDialog} onOpenChange={setShowTodoDialog}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Todo bearbeiten</DialogTitle>
-            <DialogDescription>
-              Bearbeiten Sie die Details Ihres Todos hier.
-            </DialogDescription>
+            <DialogTitle>Todo editing</DialogTitle>
+            <DialogDescription>Edit your todo</DialogDescription>
           </DialogHeader>
           {selectedTodo && (
             <EditTodoForm
               todo={selectedTodo}
               session={session}
               onClose={() => {
-                setOpen(false);
+                // schliesst das Dialog
+                setShowTodoDialog(false);
                 setSelectedTodo(null);
               }}
             />

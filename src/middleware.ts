@@ -2,7 +2,7 @@ import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
 
 const setCookie = (name: string, value: string) =>
-  `${name}=${value}; Path=/; HttpOnly; SameSite=Lax`;
+  `${name}=${value}; Path=/; HttpOnly; SameSite=Lax; Max-Age=3600`; // 1 hour valid
 
 export async function middleware(req: NextRequest) {
   const token = await getToken({ req, secret: process.env.AUTH_SECRET });

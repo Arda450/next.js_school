@@ -9,33 +9,42 @@ import { useFormStatus } from "react-dom";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface LoginFormProps {
   setFormContext: (context: FormContext) => void;
 }
 
 export default function LoginForm({ setFormContext }: LoginFormProps) {
+  // useActionState gibt ein Array zurück, das den state und eine Funktion (loginAction) enthält, um die Aktion auszuführen
+  // state speichert die aktuelle Phase der Aktion (loading, success, error) und eventuelle Fehler
+  // useActionState ruft die Login Funktion vom auth-actions.ts auf und aktualisiert den state
   const [state, loginAction] = useActionState(login, undefined);
+  const router = useRouter();
 
-  const handleLoginAction = (formData: FormData) => {
-    toast.promise(
-      async () => {
-        loginAction(formData);
-      },
-      {
-        loading: "Logging in...",
-        success: "Logged in successfully!",
-        error: "Failed to log in.",
-      }
-    );
+  // Weiterleitung nach erfolgreichem Login
+
+  // useEffect überwacht den state und führt die entsprechenden Aktionen aus
+  useEffect(() => {
+    // Für Toast und Weiterleitung nach erfolgreichem Login
+    if (state?.status === "success") {
+      router.push("/protected");
+      toast.success("You are logged in! Welcome back!");
+    }
+    // Für Toast bei Login-Fehlern
+    if (state?.status === "error") {
+      toast.error(state.error || "Login failed");
+    }
+  }, [state, router]);
+
+  // handleLogin ist die Funktion, die aufgerufen wird, wenn das Formular abgeschickt wird
+  // Übergibt die FormData an die loginAction
+  const handleLogin = (formData: FormData) => {
+    loginAction(formData);
   };
 
-  useEffect(() => {
-    console.log(state);
-  }, [state]);
-
   return (
-    <form className="flex flex-col gap-2" action={handleLoginAction}>
+    <form className="flex flex-col gap-2" action={handleLogin}>
       {state?.status === "error" && (
         <div className="flex flex-col text-red-500 text-sm">
           {state.error && <span>{state.error}</span>}
@@ -53,9 +62,11 @@ export default function LoginForm({ setFormContext }: LoginFormProps) {
           className={`${
             state?.errors?.email ? " outline outline-red-500 outline-1" : ""
           }`}
+          autoComplete="email"
           autoFocus
           id="email"
           name="email"
+          type="email"
         />
       </div>
       <div>
@@ -64,11 +75,13 @@ export default function LoginForm({ setFormContext }: LoginFormProps) {
           className={
             state?.errors?.password ? "outline outline-red-500 outline-1" : ""
           }
+          autoComplete="password"
           id="password"
           type="password"
           name="password"
         />
       </div>
+      {/*This is the function down below in the code*/}
       <SubmitButton />
       <p className="mt-4 self-end">
         Need an account?

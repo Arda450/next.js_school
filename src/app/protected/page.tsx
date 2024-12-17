@@ -3,14 +3,20 @@ import AddTodoForm from "@/components/forms/add-todo-form";
 import { auth } from "@/auth";
 import TodoListContainer from "@/components/todo-list/todo-list-container";
 
+// page.tsx
 export default async function Home() {
-  const session = await auth(); // Server-seitiges Abrufen der Session
+  const session = await auth();
+
+  if (!session) {
+    return null;
+  }
 
   return (
     <div className="p-6">
-      <AddTodoForm session={session} />
-      <h1 className="text-xl font-bold mb-6 p-4">Meine To-Dos</h1>
-      <div className="mt-8">
+      <div className="flex items-center justify-between mb-6">
+        <AddTodoForm session={session} />
+      </div>
+      <div>
         <TodoListContainer />
       </div>
     </div>

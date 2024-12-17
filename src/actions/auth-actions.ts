@@ -28,7 +28,10 @@ export const logout = async () => {
   }
 };
 
-export const login = async (prevState: any, formData: FormData) => {
+export const login = async (
+  prevState: any,
+  formData: FormData
+): Promise<any> => {
   const result = signInSchema.safeParse(Object.fromEntries(formData));
 
   if (!result.success) {
@@ -40,24 +43,28 @@ export const login = async (prevState: any, formData: FormData) => {
 
   try {
     // Wenn der Login erfolgreich ist, den Benutzer anmelden
-    await signIn("credentials", {
+    const res = await signIn("credentials", {
       email: formData.get("email"),
       password: formData.get("password"),
-      redirectTo: "/protected",
+      redirect: false,
     });
+
+    revalidatePath("/"); // Seite neu laden
+    // wenn "success" wird es im useActionState gespeichert und im useEffect ausgeführt (login-form.tsx)
+    return { status: "success" };
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
         case "CredentialsSignin":
           return { status: "error", error: "Invalid credentials" };
+        case "CallbackRouteError":
+          return { status: "error", error: "Server connection failed" };
         default:
           return { status: "error", error: "Something went wrong" };
       }
     }
-    throw error;
+    return { status: "error", error: "An unexpected error occurred" };
   }
-  // die daten auf der seite löschen und wieder fetchen
-  revalidatePath("/");
 };
 
 // ###################################################################

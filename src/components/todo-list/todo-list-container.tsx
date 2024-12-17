@@ -1,6 +1,7 @@
 // Server Component (kein "use client")
 import { auth } from "@/auth";
 import TodoList from "./todo-list";
+import { Todo } from "@/types/todo";
 
 // Daten-Fetching Logik
 async function getTodos(session: any) {
@@ -52,5 +53,5 @@ export default async function TodoListContainer() {
   }
 
   // Übergabe der Daten an die Client Component
-  return <TodoList todos={todos} session={session} />;
+  return <TodoList session={session} />;
 }

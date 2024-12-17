@@ -17,14 +17,26 @@ import {
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { error } from "console";
-import { useState } from "react"; // Für Zustandsverwaltung
+import { useState } from "react"; // Für diee Zustandsverwaltung
+import { useTodos } from "../todos/TodoContext";
+import { toast } from "sonner";
+import { Session } from "next-auth";
 
 type TodoFormValues = z.infer<typeof todoSchema>;
 
-export default function TodoForm() {
+interface TodoFormProps {
+  // Funktion toggleFormVisibility wird im onCancel als Prop empfangen
+  onCancel: () => void;
+  session: Session;
+}
+
+// onCancel wird hier als Prop übergeben
+export default function TodoForm({ onCancel, session }: TodoFormProps) {
   // Lokaler Zustand für Erfolg- oder Fehlermeldungen
-  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { refreshTodos } = useTodos(); // für das erneute Laden der Todos nach erfolgreicher Erstellung
 
   const form = useForm<TodoFormValues>({
     resolver: zodResolver(todoSchema),
@@ -34,9 +46,15 @@ export default function TodoForm() {
     },
   });
 
+  // Funktion wird im Child definiert mit toggleFormVisibility als onCancel
+  const handelCancel = () => {
+    form.reset();
+    onCancel();
+  };
+
   const onSubmit = async (data: TodoFormValues) => {
-    setStatusMessage(null); // Vorherige Nachricht zurücksetzen
     setIsSubmitting(true);
+
     try {
       const response = await fetch(`/api/todos`, {
         method: "POST",
@@ -47,27 +65,30 @@ export default function TodoForm() {
       });
 
       const responseData = await response.json();
+
       console.log(responseData);
       if (response.ok) {
-        setStatusMessage("To-Do erfolgreich erstellt!");
+        toast.success("To-Do erfolgreich erstellt!", {
+          duration: 3000,
+        });
         form.reset(); // Formular zurücksetzen
+        refreshTodos(); // Todos erneut laden
+        onCancel();
       } else {
         switch (response.status) {
           case 400:
-            setStatusMessage(responseData.message || "Ungültige Eingabedaten.");
+            toast.error(responseData.message || "Ungültige Eingabedaten.");
             break;
           case 422:
-            setStatusMessage(responseData.message || "Validierungsfehler.");
+            toast.error(responseData.message || "Validierungsfehler.");
             break;
           default:
-            setStatusMessage(
-              "Serverfehler. Bitte versuchen Sie es später erneut."
-            );
+            toast.error("Serverfehler. Bitte versuchen Sie es später erneut.");
         }
       }
     } catch (error) {
       console.error("Fehler beim Erstellen des To-Dos:", error);
-      setStatusMessage("Ein unerwarteter Fehler ist aufgetreten.");
+      toast.error("Ein unerwarteter Fehler ist aufgetreten.");
     } finally {
       setIsSubmitting(false); // Button wieder aktivieren
     }
@@ -79,11 +100,6 @@ export default function TodoForm() {
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-6 outline outline-1 outline-solid outline-black"
       >
-        {/* Statusnachricht */}
-        {statusMessage && (
-          <div className="text-center text-red-500">{statusMessage}</div>
-        )}
-
         {/* Titel */}
         <FormField
           control={form.control}
@@ -113,11 +129,16 @@ export default function TodoForm() {
             </FormItem>
           )}
         />
-
-        {/* Absenden-Button */}
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Wird gesendet..." : "To-Do erstellen"}
-        </Button>
+        <div className="flex justify-start items-center space-x-2">
+          {/* Funktion toggleFormVisibility wird hier aufgerufen */}
+          <Button variant="outline" onClick={handelCancel} type="button">
+            Cancel
+          </Button>
+          {/* Absenden-Button */}
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Sending..." : "Create"}
+          </Button>
+        </div>
       </form>
     </Form>
   );
