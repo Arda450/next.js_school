@@ -14,14 +14,14 @@ import {
 import { Todo } from "@/types/todo";
 
 // Definition der Kontext-Struktur
-interface TodoContextType {
+type TodoContextType = {
   todos: Todo[]; // Liste aller Todos
   setTodos: (todos: Todo[]) => void; // Funktion zum Setzen aller Todos
   addTodo: (todo: Todo) => void; // Funktion zum Hinzufügen eines Todos
   updateTodo: (todo: Todo) => void; // Funktion zum Aktualisieren eines Todos
-  deleteTodo: (id: number) => void; // Funktion zum Löschen eines Todos
+  deleteTodo: (id: string) => Promise<boolean>; // Funktion zum Löschen eines Todos
   refreshTodos: () => Promise<void>; // Funktion zum Neuladen aller Todos
-}
+};
 
 // Erstellen des Kontexts
 const TodoContext = createContext<TodoContextType | undefined>(undefined);
@@ -66,9 +66,21 @@ export function TodoProvider({ children }: { children: ReactNode }) {
     );
   }, []);
 
-  // Funktion zum Löschen eines Todos basierend auf der id
-  const deleteTodo = useCallback((id: number) => {
-    setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
+  const deleteTodo = useCallback(async (id: string): Promise<boolean> => {
+    try {
+      const response = await fetch(`/api/todos/${id}`, {
+        method: "DELETE",
+      });
+
+      if (response.status === 204 || response.ok) {
+        setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error("Delete error:", error);
+      return false;
+    }
   }, []);
 
   // Bereitstellung des Kontexts

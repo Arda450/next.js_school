@@ -24,6 +24,21 @@ export default function AddTodoForm({ session }: AddTodoFormProps) {
   return (
     <>
       <div className="flex flex-1 flex-col gap-4 p-4">
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl font-bold">My To-Dos</h1>
+          <Button
+            disabled={isFormVisible}
+            onClick={toggleFormVisibility}
+            className="my-4 w-fit transition-all duration-200"
+          >
+            <span className="flex items-center gap-2 transition-all duration-200">
+              <PlusIcon />
+              <span className="transition-all duration-200">
+                Create New Todo
+              </span>
+            </span>
+          </Button>
+        </div>
         <div
           className={`transition-all duration-300 ease-in-out overflow-hidden ${
             isFormVisible
@@ -33,18 +48,6 @@ export default function AddTodoForm({ session }: AddTodoFormProps) {
         >
           {/* Funktion wird als Prop an die Kindkomponente (TodoForm) übergeben */}
           <TodoForm onCancel={toggleFormVisibility} session={session} />
-        </div>
-
-        <div className="flex items-center justify-between">
-          <h1 className="text-xl font-bold">My To-Dos</h1>
-          <Button onClick={toggleFormVisibility} className="my-4 w-fit">
-            <span className="flex items-center gap-2 transition-all duration-200">
-              {isFormVisible ? <MinusIcon /> : <PlusIcon />}
-              <span className="transition-all duration-200">
-                {isFormVisible ? "Hide Form" : "Create New Todo"}
-              </span>
-            </span>
-          </Button>
         </div>
       </div>
     </>

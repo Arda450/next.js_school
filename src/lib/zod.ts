@@ -29,12 +29,18 @@ export const signUpSchema = z
     message: "Passwords don't match",
   });
 
+const tagSchema = z.object({
+  id: z.string(),
+  text: z.string(),
+});
+
 export const todoSchema = z.object({
   title: z.string().min(1, "Titel ist erforderlich").max(200),
   description: z.string().min(1, "Beschreibung ist erforderlich").max(20000),
-  status: z.enum(["open", "doing", "completed"]).default("open"),
-  tags: z.array(z.string()).optional(),
-  due_date: z.string().optional(),
+  due_date: z.date().nullable().optional(),
+  status: z.string(),
+  tags: z.array(tagSchema).default([]),
+  shared_with: z.string().default(""),
 });
 
 export type TodoFormValues = z.infer<typeof todoSchema>;

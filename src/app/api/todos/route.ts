@@ -1,16 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 
-// export default async function handler() {
 // Fetch all todos
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    // Authentifizierung wird überprüft
     const session = await auth();
     if (!session?.accessToken) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+      return NextResponse.json(
+        { status: "error", message: "Unauthorized" },
+        { status: 401 }
+      );
     }
-    // Anfrage wird an das Backend gesendet
+
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/todos`,
       {
@@ -20,71 +21,59 @@ export async function GET() {
         },
       }
     );
-    // Auf Fehler prüfen
+
     if (!response.ok) {
       throw new Error("Backend request failed");
     }
-    // Daten werden zurückgegeben
+
     const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
     console.error("API error:", error);
-    // Fehlerbehandlung
     return NextResponse.json(
-      { message: "Internal Server Error" },
+      { status: "error", message: "Internal server error" },
       { status: 500 }
     );
   }
 }
 
 // Create a new todo
-// To-Do-Erstellung
 export async function POST(request: NextRequest) {
-  // Abruf der aktuellen Session
   const session = await auth();
 
   if (!session || !session.accessToken) {
-    // Fehler bei fehlendem Token
     return NextResponse.json(
       { message: "Unauthorized: No token found" },
       { status: 401 }
     );
   }
 
-  // Körper der Anfrage parsen
-  const body = await request.json();
-
-  console.log("body: ", body);
-
   try {
-    // Weiterleiten der Anfrage an das Backend
+    const body = await request.json();
+    console.log("Creating todo with body:", body);
+
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/todos`,
       {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${session.accessToken}`, // Authentifizierungstoken verwenden
+          Authorization: `Bearer ${session.accessToken}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          title: body.title,
-          description: body.description,
-        }),
+        body: JSON.stringify(body), // Sende den kompletten Body
       }
     );
 
     const data = await response.json();
-
-    console.log("data: ", data);
+    console.log("Backend response:", data);
 
     if (!response.ok) {
-      // Fehlerbehandlung basierend auf Backend-Antwort
       return NextResponse.json(data, { status: response.status });
     }
 
-    return NextResponse.json(data); // Erfolgreiche Antwort zurückgeben
+    return NextResponse.json(data);
   } catch (error) {
-    console.error("Fehler bei der To-Do-Erstellung:", error);
+    console.error("Error creating todo:", error);
     return NextResponse.json(
       { message: "Internal Server Error" },
       { status: 500 }
@@ -92,7 +81,8 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function PATCH(request: Request) {
+// Update a todo
+export async function PATCH(request: NextRequest) {
   const session = await auth();
   if (!session?.accessToken) {
     return NextResponse.json(
@@ -103,7 +93,7 @@ export async function PATCH(request: Request) {
 
   try {
     const body = await request.json();
-    console.log("Request body:", body); // Debug-Log
+    console.log("Updating todo with body:", body);
 
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/todos`,
@@ -113,23 +103,18 @@ export async function PATCH(request: Request) {
           Authorization: `Bearer ${session.accessToken}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          id: body.id,
-          title: body.title,
-          description: body.description,
-          status: body.status || "open",
-        }),
+        body: JSON.stringify(body), // sende den kompletten Body
       }
     );
 
-    const responseData = await response.json();
-    console.log("Backend response:", responseData); // Debug-Log
+    const data = await response.json();
+    console.log("Backend response:", data);
 
     if (!response.ok) {
-      return NextResponse.json(responseData, { status: response.status });
+      return NextResponse.json(data, { status: response.status });
     }
 
-    return NextResponse.json(responseData);
+    return NextResponse.json(data);
   } catch (error) {
     console.error("Update error:", error);
     return NextResponse.json(
