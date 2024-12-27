@@ -9,6 +9,7 @@ import {
   useState,
   useCallback,
   ReactNode,
+  useMemo,
 } from "react";
 
 import { Todo } from "@/types/todo";
@@ -21,6 +22,9 @@ type TodoContextType = {
   updateTodo: (todo: Todo) => void; // Funktion zum Aktualisieren eines Todos
   deleteTodo: (id: string) => Promise<boolean>; // Funktion zum Löschen eines Todos
   refreshTodos: () => Promise<void>; // Funktion zum Neuladen aller Todos
+  searchQuery: string; // NEU: Suchbegriff
+  setSearchQuery: (query: string) => void; // NEU: Setter für Suchbegriff
+  filteredTodos: Todo[]; // NEU: Gefilterte Todo-Liste
 };
 
 // Erstellen des Kontexts
@@ -30,6 +34,24 @@ const TodoContext = createContext<TodoContextType | undefined>(undefined);
 export function TodoProvider({ children }: { children: ReactNode }) {
   // State für die Todo-Liste
   const [todos, setTodos] = useState<Todo[]>([]);
+  const [searchQuery, setSearchQuery] = useState(""); // NEU: State für Suchbegriff
+
+  // NEU: Gefilterte Todos basierend auf searchQuery
+  const filteredTodos = useMemo(() => {
+    const query = searchQuery.toLowerCase();
+    return todos.filter((todo) => {
+      return (
+        // Suche in Titel
+        todo.title.toLowerCase().includes(query) ||
+        // Suche in Beschreibung (falls vorhanden)
+        todo.description?.toLowerCase().includes(query) ||
+        false ||
+        // Suche in Tags (falls vorhanden)
+        todo.tags?.some((tag) => tag.text.toLowerCase().includes(query)) ||
+        false
+      );
+    });
+  }, [todos, searchQuery]);
 
   // Read (via refreshTodos) ladet die Todos vom Server
   const refreshTodos = useCallback(async () => {
@@ -87,12 +109,15 @@ export function TodoProvider({ children }: { children: ReactNode }) {
   return (
     <TodoContext.Provider
       value={{
-        todos,
+        todos: filteredTodos, // gefilterte todos werden angezeigt
         setTodos,
         addTodo,
         updateTodo,
         deleteTodo,
         refreshTodos,
+        searchQuery,
+        setSearchQuery,
+        filteredTodos,
       }}
     >
       {children}

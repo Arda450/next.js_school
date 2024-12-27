@@ -33,10 +33,13 @@ import { toast } from "sonner";
 import { isToday, parseISO } from "date-fns";
 
 export default function TodoList({ session }: Omit<TodoListProps, "todos">) {
-  const { todos, refreshTodos, deleteTodo } = useTodos();
+  const { todos, filteredTodos, searchQuery, refreshTodos, deleteTodo } =
+    useTodos();
   const [showTodoDialog, setShowTodoDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
+
+  const displayTodos = searchQuery ? filteredTodos : todos;
 
   useEffect(() => {
     refreshTodos();
@@ -67,80 +70,85 @@ export default function TodoList({ session }: Omit<TodoListProps, "todos">) {
   return (
     <>
       <div className="grid gap-6 max-w-3xl mx-auto">
-        {todos.map((todo) => {
-          const isDueSoon = todo.due_date && isToday(parseISO(todo.due_date));
-
-          return (
-            <Card
-              key={todo.id}
-              className={`relative p-3 rounded-lg shadow-md border border-gray-200 hover:shadow-lg transition-shadow ${
-                isDueSoon ? "shadow-red-200 border-red-400" : ""
-              }`}
-            >
-              <KebabMenu
-                className="absolute top-2 right-2 text-gray-500 hover:text-gray-900"
-                onEdit={() => handleEdit(todo)}
-                onDelete={() => {
-                  setSelectedTodo(todo);
-                  setShowDeleteDialog(true);
-                }}
-              />
-              <CardHeader>
-                <CardTitle className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-                  {todo.title}
-                  {isDueSoon && (
-                    <span className="inline-block px-2 py-1 text-xs font-medium text-red-800 bg-red-100 rounded-full">
-                      Due Soon
-                    </span>
+        {displayTodos.length === 0 ? (
+          <div className="text-center p-4 text-gray-500">
+            {searchQuery ? "Keine Todos gefunden" : "Keine Todos vorhanden"}
+          </div>
+        ) : (
+          displayTodos.map((todo) => {
+            const isDueSoon = todo.due_date && isToday(parseISO(todo.due_date));
+            return (
+              <Card
+                key={todo.id}
+                className={`relative p-3 rounded-lg shadow-md border border-gray-200 hover:shadow-lg transition-shadow ${
+                  isDueSoon ? "shadow-red-200 border-red-400" : ""
+                }`}
+              >
+                <KebabMenu
+                  className="absolute top-2 right-2 text-gray-500 hover:text-gray-900"
+                  onEdit={() => handleEdit(todo)}
+                  onDelete={() => {
+                    setSelectedTodo(todo);
+                    setShowDeleteDialog(true);
+                  }}
+                />
+                <CardHeader>
+                  <CardTitle className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                    {todo.title}
+                    {isDueSoon && (
+                      <span className="inline-block px-2 py-1 text-xs font-medium text-red-800 bg-red-100 rounded-full">
+                        Due Soon
+                      </span>
+                    )}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription className="text-base text-gray-700">
+                    {todo.description}
+                  </CardDescription>
+                  {todo.shared_with && (
+                    <div className="my-6">
+                      Todo shared with: {todo.shared_with}
+                    </div>
                   )}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-base text-gray-700">
-                  {todo.description}
-                </CardDescription>
-                {todo.shared_with && (
-                  <div className="my-6">
-                    Todo shared with: {todo.shared_with}
+                  <div className="flex justify-between items-center text-sm text-gray-500">
+                    {todo.due_date && (
+                      <div className="flex items-center gap-1">
+                        <span className="font-medium text-gray-600">Due:</span>
+                        {todo.due_date}
+                      </div>
+                    )}
+                    {todo.tags && todo.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {todo.tags.map((tag) => (
+                          <span
+                            key={tag.id}
+                            className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-blue-200 to-blue-300 text-blue-900 shadow-sm hover:shadow-md transition-shadow duration-200"
+                          >
+                            {tag.text}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                    {todo.status && (
+                      <div
+                        className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium shadow-sm ${
+                          todo.status === "completed"
+                            ? "bg-green-100 text-green-800"
+                            : todo.status === "doing"
+                            ? "bg-yellow-100 text-yellow-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
+                      >
+                        <span className="font-semibold">{todo.status}</span>
+                      </div>
+                    )}
                   </div>
-                )}
-                <div className="flex justify-between items-center text-sm text-gray-500">
-                  {todo.due_date && (
-                    <div className="flex items-center gap-1">
-                      <span className="font-medium text-gray-600">Due:</span>
-                      {todo.due_date}
-                    </div>
-                  )}
-                  {todo.tags && todo.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-2">
-                      {todo.tags.map((tag) => (
-                        <span
-                          key={tag.id}
-                          className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-blue-200 to-blue-300 text-blue-900 shadow-sm hover:shadow-md transition-shadow duration-200"
-                        >
-                          {tag.text}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                  {todo.status && (
-                    <div
-                      className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium shadow-sm ${
-                        todo.status === "completed"
-                          ? "bg-green-100 text-green-800"
-                          : todo.status === "doing"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : "bg-red-100 text-red-800"
-                      }`}
-                    >
-                      <span className="font-semibold">{todo.status}</span>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
+                </CardContent>
+              </Card>
+            );
+          })
+        )}
       </div>
 
       <Dialog open={showTodoDialog} onOpenChange={setShowTodoDialog}>

@@ -32,7 +32,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   const data = {
     user: {
-      name: session?.user?.username || "Guest",
+      username: session?.user?.username || "Guest",
       email: session?.user?.email || "m@example.com",
       avatar: session?.user?.image || "/avatars/shadcn.jpg",
     },
