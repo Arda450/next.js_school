@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Label } from "./ui/label";
+import { Label } from "@/components/ui/label";
 
 interface SearchResult {
   id: string;

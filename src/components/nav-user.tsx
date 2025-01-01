@@ -22,22 +22,29 @@ import { CaretSortIcon, ComponentPlaceholderIcon } from "@radix-ui/react-icons";
 import { logout } from "@/actions/auth-actions"; // Importiere die Logout-Funktion
 import { useRouter } from "next/navigation"; // Importiere useRouter
 import Link from "next/link";
+import { useUser } from "./user/UserContext";
 
-export function NavUser({
-  user,
-}: {
+interface NavUserProps {
   user: {
     username: string;
     email: string;
     avatar: string;
   };
-}) {
+}
+
+export function NavUser({ user }: NavUserProps) {
   const { isMobile } = useSidebar();
   const router = useRouter(); // Router für Navigation
+  const { clearUser } = useUser();
+
+  if (status === "loading" || !user) {
+    return null;
+  }
 
   const handleLogout = async () => {
     try {
       await logout(); // Führt die zentrale Logout-Funktion aus
+      clearUser(); // Lösche den aktuellen User
       router.push("/"); // Umleitung zur Startseite nach Logout
     } catch (error) {
       console.error("Logout failed:", error);
@@ -84,19 +91,12 @@ export function NavUser({
                 </div>
               </div>
             </DropdownMenuLabel>
-            {/* <DropdownMenuSeparator /> */}
-            {/* <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Sparkles />
-                Upgrade to Pro
-              </DropdownMenuItem>
-            </DropdownMenuGroup> */}
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
                 <Link href="/protected/settings/profile" className="flex">
                   <BadgeCheck className="mr-2 h-4 w-4" />
-                  Profile
+                  Profile Settings
                 </Link>
               </DropdownMenuItem>
 

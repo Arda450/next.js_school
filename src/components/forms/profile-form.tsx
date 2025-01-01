@@ -7,15 +7,18 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useUser } from "../user/UserContext";
 
 export default function ProfileForm() {
   const { data: session, update } = useSession();
+  const { setUser } = useUser(); // UserContext hinzufügen
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     username: session?.user?.username || "",
     email: session?.user?.email || "",
-    password: "",
-    current_password: "",
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
     profile_image: null as File | null,
   });
 
@@ -57,9 +60,9 @@ export default function ProfileForm() {
         formDataToSend.append("email", formData.email);
       }
 
-      if (formData.password) {
-        formDataToSend.append("password", formData.password);
-        formDataToSend.append("current_password", formData.current_password);
+      if (formData.newPassword) {
+        formDataToSend.append("password", formData.newPassword);
+        formDataToSend.append("current_password", formData.currentPassword);
       }
 
       if (formData.profile_image) {
@@ -77,21 +80,17 @@ export default function ProfileForm() {
         body: formDataToSend,
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Update failed");
+      const responseData = await response.json();
+
+      if (response.ok) {
+        toast.success("Profile updated successfully");
+        setUser(responseData.user); // Aktualisiere UserContext
+      } else {
+        throw new Error(responseData.message || "Update failed");
       }
-
-      const data = await response.json();
-      console.log("Response data:", data);
-
-      await update(); // Session aktualisieren
-      toast.success("Profile updated successfully");
-    } catch (error) {
-      console.error("Update error:", error);
-      toast.error(
-        error instanceof Error ? error.message : "Failed to update profile"
-      );
+    } catch (error: any) {
+      console.error("Error updating profile:", error.message);
+      toast.error(error.message || "An unexpected error occurred");
     } finally {
       setIsLoading(false);
     }
@@ -144,25 +143,38 @@ export default function ProfileForm() {
           <div className="grid gap-2">
             <label htmlFor="current_password">Current Password</label>
             <Input
-              id="password"
+              id="current_password"
               type="password"
               name="password"
-              value={formData.current_password}
+              value={formData.currentPassword}
               onChange={(e) =>
-                setFormData({ ...formData, current_password: e.target.value })
+                setFormData({ ...formData, currentPassword: e.target.value })
               }
             />
           </div>
 
           <div className="grid gap-2">
-            <label htmlFor="confirmPassword">New Password</label>
+            <label htmlFor="newPassword">New Password</label>
             <Input
-              id="confirmPassword"
+              id="newPassword"
               type="password"
-              name="password_confirmation"
-              value={formData.password}
+              // name="password_confirmation"
+              value={formData.newPassword}
               onChange={(e) =>
-                setFormData({ ...formData, password: e.target.value })
+                setFormData({ ...formData, newPassword: e.target.value })
+              }
+            />
+          </div>
+
+          <div className="grid gap-2">
+            <label htmlFor="confirmNewPassword">Confirm New Password</label>
+            <Input
+              id="confirmNewPassword"
+              type="password"
+              // name="password_confirmation"
+              value={formData.confirmPassword}
+              onChange={(e) =>
+                setFormData({ ...formData, confirmPassword: e.target.value })
               }
             />
           </div>

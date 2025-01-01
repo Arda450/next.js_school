@@ -10,8 +10,16 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import SearchBar from "@/components/ui/search-bar";
+import { useUser } from "@/components/user/UserContext";
+import { useSession } from "next-auth/react";
 
-export default function Header({ username }: { username?: string }) {
+export default function Header() {
+  const { user } = useUser();
+  const { status } = useSession();
+
+  // Warte auf die Session
+  if (status === "loading") return null;
+
   return (
     <header className="flex h-16 shrink-0 items-center relative border-b border-gray-200">
       <div className="flex items-center gap-2 absolute left-0">
@@ -21,7 +29,9 @@ export default function Header({ username }: { username?: string }) {
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink>Welcome, {username || "Guest"}</BreadcrumbLink>
+                <BreadcrumbLink>
+                  <span>Welcome, {user?.username || "Guest"}</span>
+                </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator className="hidden md:block" />
             </BreadcrumbList>

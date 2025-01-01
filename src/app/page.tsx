@@ -16,9 +16,9 @@ export default function LandingPage() {
   );
 
   return (
-    <div className="w-full flex flex-col items-center">
+    <div className="w-full flex flex-col items-center justify-center h-screen">
       <div className="w-full max-w-[600px] flex flex-col">
-        <h1 className="text-2xl font-bold mb-6">
+        <h1 className="text-2xl font-bold mb-6 flex justify-center">
           {formContext === FormContext.LOGIN
             ? "Welcome back!"
             : "Create your account"}

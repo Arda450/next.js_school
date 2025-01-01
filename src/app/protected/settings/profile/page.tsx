@@ -8,7 +8,7 @@ export default function Profile() {
         <div>
           <h3 className="text-lg font-medium">Profile Settings</h3>
           <p className="text-sm text-muted-foreground">
-            Update your profile information and account settings.
+            Update your profile information.
           </p>
         </div>
         <Separator />

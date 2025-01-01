@@ -7,12 +7,6 @@ import { z } from "zod";
 import { Input } from "@/components/ui/input";
 
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-
-import {
   Form,
   FormField,
   FormItem,
@@ -51,7 +45,7 @@ import {
 } from "react-aria-components";
 import { parseDate } from "@internationalized/date";
 import InputWithTags from "../ui/input-with-tags";
-import { UserSearch } from "../user-search";
+import { UserSearch } from "../user/user-search";
 
 type TodoFormValues = z.infer<typeof todoSchema>;
 

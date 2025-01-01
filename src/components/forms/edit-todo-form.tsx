@@ -19,7 +19,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { useTodos } from "../todos/TodoContext";
 import { toast } from "sonner";
 import { Todo } from "@/types/todo";
-import { de } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { format, parse } from "date-fns";
 
@@ -57,8 +56,6 @@ export default function EditTodoForm({ todo, onClose }: EditTodoFormProps) {
   const [error, setError] = useState<string | null>(null);
   // Zugriff auf die updateTodo-Funktion und das deleteTodo aus dem Kontext
   const { updateTodo } = useTodos();
-  // showDeleteDialog startet mit false, das heisst der AlertDialog ist zu Beginn nicht sichtbar
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   // console.log("Todo received:", todo); // Debugging
   // console.log("Due date:", todo.due_date); // Debugging

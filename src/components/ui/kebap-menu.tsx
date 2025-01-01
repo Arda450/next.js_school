@@ -6,14 +6,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { MoreVertical } from "lucide-react";
 import { cn } from "@/lib/utils";
+import DeleteButton from "@/components/todos/deleteTodoDialog";
+import { Todo } from "@/types/todo";
 
 interface KebabMenuProps {
   className?: string;
   onEdit: () => void;
-  onDelete: () => void;
+  todo: Todo; // Neuer Prop
 }
 
-function KebabMenu({ className, onEdit, onDelete }: KebabMenuProps) {
+function KebabMenu({ className, onEdit, todo }: KebabMenuProps) {
   return (
     <div className={cn(className)}>
       <DropdownMenu>
@@ -23,8 +25,15 @@ function KebabMenu({ className, onEdit, onDelete }: KebabMenuProps) {
           </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuItem onClick={onEdit}>Edit Todo</DropdownMenuItem>
-          <DropdownMenuItem onClick={onDelete}>Delete Todo</DropdownMenuItem>
+          <DropdownMenuItem onClick={onEdit}>Todo bearbeiten</DropdownMenuItem>
+          <DeleteButton
+            todo={todo}
+            trigger={
+              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                Todo löschen
+              </DropdownMenuItem>
+            }
+          />
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

@@ -11,11 +11,10 @@ export async function PATCH(request: Request) {
     const formData = await request.formData();
     const filteredData = Object.fromEntries(formData.entries());
 
-    // Debug-Logging
-    console.log("Received FormData:", Object.fromEntries(formData.entries()));
-    console.log("Access Token:", session.accessToken);
+    // Debug-Logging der eingehenden Daten
+    console.log("Incoming update data:", filteredData);
 
-    // 4. Request an Laravel Backend
+    // Request an Laravel Backend
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/user/update`,
       {
@@ -29,18 +28,38 @@ export async function PATCH(request: Request) {
       }
     );
 
-    // Debug-Logging
-    console.log("Backend response status:", response.status);
+    const responseData = await response.json();
 
-    const data = await response.json();
     if (!response.ok) {
-      throw new Error(data.message || "Update failed");
+      console.error("Backend update failed:", responseData);
+      throw new Error(responseData.message || "Update failed");
     }
 
-    return NextResponse.json(data);
+    // Erstelle ein aktualisiertes User-Objekt
+    const updatedUser = {
+      ...session.user,
+      ...filteredData, // Neue Daten
+      // Stelle sicher, dass alle wichtigen Felder vorhanden sind
+      username: filteredData.username || session.user.username,
+      email: filteredData.email || session.user.email,
+      image: responseData.user?.profile_image || session.user.image,
+    };
+
+    // Gib die aktualisierten Daten zurück
+    return NextResponse.json({
+      status: "success",
+      message: "Profile updated successfully",
+      user: updatedUser,
+      // Füge die ursprüngliche Backend-Antwort hinzu
+      serverResponse: responseData,
+    });
   } catch (error) {
+    console.error("Profile update error:", error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Unknown error" },
+      {
+        status: "error",
+        error: error instanceof Error ? error.message : "Unknown error",
+      },
       { status: 500 }
     );
   }

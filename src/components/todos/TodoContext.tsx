@@ -13,10 +13,13 @@ import {
 } from "react";
 
 import { Todo } from "@/types/todo";
+import { isToday, isTomorrow } from "date-fns";
 
 // Definition der Kontext-Struktur
 type TodoContextType = {
   todos: Todo[]; // Liste aller Todos
+  sharedTodos: Todo[]; // Liste aller geteilter Todos
+  setSharedTodos: (todos: Todo[]) => void; // Funktion zum Setzen aller geteilter Todos
   setTodos: (todos: Todo[]) => void; // Funktion zum Setzen aller Todos
   addTodo: (todo: Todo) => void; // Funktion zum Hinzufügen eines Todos
   updateTodo: (todo: Todo) => void; // Funktion zum Aktualisieren eines Todos
@@ -34,9 +37,11 @@ const TodoContext = createContext<TodoContextType | undefined>(undefined);
 export function TodoProvider({ children }: { children: ReactNode }) {
   // State für die Todo-Liste
   const [todos, setTodos] = useState<Todo[]>([]);
+  const [sharedTodos, setSharedTodos] = useState<Todo[]>([]);
+
   const [searchQuery, setSearchQuery] = useState(""); // NEU: State für Suchbegriff
 
-  // NEU: Gefilterte Todos basierend auf searchQuery
+  // filterte die Todos basierend auf searchquery
   const filteredTodos = useMemo(() => {
     const query = searchQuery.toLowerCase();
     return todos.filter((todo) => {
@@ -53,9 +58,25 @@ export function TodoProvider({ children }: { children: ReactNode }) {
     });
   }, [todos, searchQuery]);
 
-  // Read (via refreshTodos) ladet die Todos vom Server
+  const checkDueStatus = useCallback((todo: Todo): Todo => {
+    if (!todo.due_date) return todo;
+
+    const [day, month, year] = todo.due_date.split(".");
+    const dueDate = new Date(
+      parseInt(year),
+      parseInt(month) - 1,
+      parseInt(day)
+    );
+    const isdueSoon = isToday(dueDate) || isTomorrow(dueDate);
+
+    return {
+      ...todo,
+      is_due_soon: isdueSoon,
+    };
+  }, []);
+
+  // Modifiziere refreshTodos
   const refreshTodos = useCallback(async () => {
-    // Anfrage wird an das Next.js Backend gesendet
     try {
       const response = await fetch("/api/todos", {
         headers: { "Content-Type": "application/json" },
@@ -65,16 +86,20 @@ export function TodoProvider({ children }: { children: ReactNode }) {
       if (!response.ok) {
         throw new Error("Failed to fetch todos");
       }
-      // Daten werden aus der api geholt und in den state gesetzt
+
       const data = await response.json();
       if (data.status === "success" && Array.isArray(data.todos)) {
-        // Todos werden in den state gesetzt
-        setTodos(data.todos);
+        // Prüfe Due-Status für alle Todos
+        const todosWithDueStatus = data.todos.map(checkDueStatus);
+        const sharedTodosWithDueStatus = data.shared_todos.map(checkDueStatus);
+
+        setTodos(todosWithDueStatus);
+        setSharedTodos(sharedTodosWithDueStatus);
       }
     } catch (error) {
       console.error("Fehler beim Laden der Todos:", error);
     }
-  }, []);
+  }, [checkDueStatus]);
 
   // Todo Liste erweitern
   const addTodo = useCallback((newTodo: Todo) => {
@@ -111,6 +136,8 @@ export function TodoProvider({ children }: { children: ReactNode }) {
       value={{
         todos: filteredTodos, // gefilterte todos werden angezeigt
         setTodos,
+        sharedTodos,
+        setSharedTodos,
         addTodo,
         updateTodo,
         deleteTodo,

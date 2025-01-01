@@ -1,10 +1,10 @@
-import { AppSidebar } from "@/components/app-sidebar";
+import { UserProvider } from "@/components/user/UserContext";
+import { auth } from "@/auth"; // Authentifizierungslogik
 import { TodoProvider } from "@/components/todos/TodoContext";
 import { SidebarProvider } from "@/components/ui/sidebar";
-import { auth } from "@/auth";
+import { AppSidebar } from "@/components/app-sidebar";
 import Header from "@/components/header/header";
 
-// app/authenticated/layout.tsx
 export default async function AuthenticatedLayout({
   children,
 }: {
@@ -17,24 +17,24 @@ export default async function AuthenticatedLayout({
   }
 
   return (
-    <TodoProvider>
-      <div className="min-h-screen flex main-layout">
-        <SidebarProvider>
-          <div className="sidebar">
-            <AppSidebar />
-          </div>
-          <div className="content flex-grow">
-            <header>
-              <Header username={session?.user?.username} />
-            </header>
+    <UserProvider>
+      <TodoProvider>
+        <div className="min-h-screen flex main-layout">
+          <SidebarProvider>
+            <div className="sidebar">
+              <AppSidebar />
+            </div>
+            <div className="content flex-grow">
+              <header>
+                <Header />
+              </header>
 
-            <main>{children}</main>
-          </div>
-        </SidebarProvider>
-        <footer></footer>
-      </div>
-    </TodoProvider>
+              <main>{children}</main>
+            </div>
+          </SidebarProvider>
+          <footer></footer>
+        </div>
+      </TodoProvider>
+    </UserProvider>
   );
 }
-
-// npm zustand installieren
