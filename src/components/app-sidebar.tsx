@@ -27,10 +27,26 @@ import {
 } from "@/components/ui/sidebar";
 import { useUser } from "@/components/user/UserContext";
 import { useSession } from "next-auth/react";
+import { useTodos } from "@/components/todos/TodoContext";
+import { useRouter } from "next/navigation";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useUser();
   const { status } = useSession();
+  const router = useRouter(); // NEU: Router importieren
+  const { setActiveTag, activeTag } = useTodos();
+
+  const handleTagClick = (tag: string) => {
+    if (activeTag === tag) {
+      setActiveTag(null);
+    } else {
+      setActiveTag(tag);
+    }
+  };
+
+  const handleProfileClick = () => {
+    router.push("/protected/settings/profile");
+  };
 
   // Warte auf die Session
   if (status === "loading") return null;
@@ -49,72 +65,83 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     },
     navMain: [
       {
+        id: "tasks",
         title: "Tasks",
-        url: "#",
         icon: SquareTerminal,
-        isActive: true,
         items: [
           {
+            id: "upcoming",
             title: "Upcoming",
-            url: "#",
           },
           {
+            id: "today",
             title: "Today",
-            url: "#",
           },
           {
+            id: "calendar",
             title: "Calendar",
-            url: "#",
           },
         ],
       },
       {
+        id: "categories",
         title: "Find by category",
-        url: "#",
         icon: Search,
         items: [
           {
+            id: "collaboration",
             title: "Collaboration",
-            url: "#",
           },
           {
+            id: "categories",
             title: "Categories",
-            url: "#",
           },
           {
+            id: "personal",
             title: "Personal",
-            url: "#",
+            onClick: () => handleTagClick("Personal"),
+            active: activeTag === "Personal",
           },
           {
+            id: "work",
             title: "Work",
-            url: "#",
+            onClick: () => handleTagClick("Work"),
+            active: activeTag === "Work",
           },
           {
+            id: "school",
             title: "School",
-            url: "#",
+            onClick: () => handleTagClick("School"),
+            active: activeTag === "School",
           },
           {
+            id: "low_priority",
             title: "Low priority",
-            url: "#",
+            onClick: () => handleTagClick("Low Priority"),
+            active: activeTag === "Low Priority",
           },
           {
+            id: "urgent",
             title: "Urgent",
-            url: "#",
+            onClick: () => handleTagClick("Urgent"),
+            active: activeTag === "Urgent",
           },
         ],
       },
       {
+        id: "settings",
         title: "Settings",
-        url: "#",
         icon: Settings2,
         items: [
           {
+            id: "profile",
             title: "Profile",
-            url: "/protected/settings/profile",
+            icon: User,
+            onClick: handleProfileClick, // NEU: Click-Handler statt URL
           },
           {
+            id: "theme",
             title: "Theme",
-            url: "#",
           },
         ],
       },
@@ -143,17 +170,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <Link
           href={data.appInfo.url}
-          className="group hover:no-underline transition-all duration-1000"
+          className="group hover:no-underline transition-all duration-1000 cursor-pointer"
         >
-          <div className="flex items-center space-x-4 rounded-lg p-2 transition-all duration-200 group-hover:bg-gray-200">
-            <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+          <div className="flex items-center space-x-4 rounded-lg p-2 transition-all duration-200 group-hover:bg-gray-200 cursor-pointer">
+            <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground cursor-pointer">
               <data.appInfo.icon className="size-5" />
             </div>
             <div className="group-data-[collapsible=icon]:hidden">
-              <h2 className="text-base font-semibold transition-all duration-1000">
+              <h2 className="text-base font-semibold transition-all duration-1000 cursor-pointer">
                 {data.appInfo.name}
               </h2>
-              <p className="text-sm text-gray-700">
+              <p className="text-sm text-gray-700 cursor-pointer">
                 {data.appInfo.description}
               </p>
             </div>

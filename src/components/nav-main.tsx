@@ -1,7 +1,6 @@
 "use client";
 
 import { type LucideIcon } from "lucide-react";
-
 import {
   Collapsible,
   CollapsibleContent,
@@ -9,10 +8,9 @@ import {
 } from "@/components/ui/collapsible";
 import {
   SidebarGroup,
-  SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuButton,
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
@@ -23,30 +21,27 @@ export function NavMain({
   items,
 }: {
   items: {
+    id: string;
     title: string;
-    url: string;
     icon?: LucideIcon;
-    isActive?: boolean;
     items?: {
+      id: string;
       title: string;
-      url: string;
+      url?: string;
+      icon?: LucideIcon;
+      onClick?: () => void;
+      isActive?: boolean;
     }[];
   }[];
 }) {
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Platform</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
-          <Collapsible
-            key={item.title}
-            asChild
-            defaultOpen={item.isActive}
-            className="group/collapsible"
-          >
+          <Collapsible key={item.id} asChild className="group/collapsible">
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
-                <SidebarMenuButton tooltip={item.title}>
+                <SidebarMenuButton className="w-full justify-between cursor-pointer">
                   {item.icon && <item.icon />}
                   <span>{item.title}</span>
                   <ChevronRightIcon className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
@@ -56,10 +51,20 @@ export function NavMain({
                 <SidebarMenuSub>
                   {item.items?.map((subItem) => (
                     <SidebarMenuSubItem key={subItem.title}>
-                      <SidebarMenuSubButton asChild>
-                        <a href={subItem.url}>
-                          <span>{subItem.title}</span>
-                        </a>
+                      <SidebarMenuSubButton
+                        onClick={subItem.onClick}
+                        className={`w-full${
+                          subItem.isActive ? "bg-primary/10 text-primary" : ""
+                        }`}
+                      >
+                        {/* profile icon */}
+                        {subItem.icon && (
+                          <subItem.icon className="mr-2 h-4 w-4" />
+                        )}
+                        {subItem.title}
+                        {subItem.isActive && (
+                          <span className="ml-auto text-xs">✓</span>
+                        )}
                       </SidebarMenuSubButton>
                     </SidebarMenuSubItem>
                   ))}

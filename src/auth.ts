@@ -15,6 +15,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         try {
           if (!credentials?.email || !credentials?.password) return null;
 
+          console.log("Login attempt for:", credentials.email); // Debug-Logging
+
           // Anfrage an das Backend zur Authentifizierung
           const response = await fetch(
             `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/login`,
@@ -32,20 +34,25 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           );
 
           const data = await response.json();
-          const user = data.user;
+          console.log("Login response:", data); // Debug-Logging
 
-          if (response.ok && data) {
+          if (!response.ok) {
+            console.error("Login failed:", data); // Debug-Logging
+            throw new Error(data.message || "Login failed");
+          }
+
+          if (response.ok && data.user) {
             return {
-              id: user.id,
-              username: user.username,
-              email: user.email,
-              token: data.token, // Access Token
+              id: data.user.id,
+              username: data.user.username,
+              email: data.user.email,
+              token: data.token,
             };
           }
           return null;
         } catch (error) {
           console.error("Authorization error:", error);
-          return null;
+          throw error;
         }
       },
     }),

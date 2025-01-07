@@ -49,21 +49,23 @@ export const login = async (
       redirect: false,
     });
 
+    if (res?.error) {
+      return {
+        status: "error",
+        error: res.error,
+      };
+    }
+
     revalidatePath("/"); // Seite neu laden
     // wenn "success" wird es im useActionState gespeichert und im useEffect ausgeführt (login-form.tsx)
     return { status: "success" };
   } catch (error) {
-    if (error instanceof AuthError) {
-      switch (error.type) {
-        case "CredentialsSignin":
-          return { status: "error", error: "Invalid credentials" };
-        case "CallbackRouteError":
-          return { status: "error", error: "Server connection failed" };
-        default:
-          return { status: "error", error: "Something went wrong" };
-      }
-    }
-    return { status: "error", error: "An unexpected error occurred" };
+    console.error("Login error:", error);
+    return {
+      status: "error",
+      error:
+        error instanceof Error ? error.message : "An unexpected error occurred",
+    };
   }
 };
 

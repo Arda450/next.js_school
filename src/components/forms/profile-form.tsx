@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -17,8 +17,8 @@ export default function ProfileForm() {
     username: session?.user?.username || "",
     email: session?.user?.email || "",
     currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
+    password: "",
+    password_confirmation: "",
     profile_image: null as File | null,
   });
 
@@ -30,48 +30,59 @@ export default function ProfileForm() {
     try {
       // FormData wird erstellt
       const formDataToSend = new FormData();
+      let hasChanges = false;
 
       // Debug-Logging hinzufügen
       console.log("Submitting form with data:", {
         username: formData.username,
       });
 
-      // // Nur geänderte Felder werden gesendet
-      // if (formData.username !== session?.user?.username) {
-      //   formDataToSend.append("username", formData.username);
-      // }
-      // if (formData.email !== session?.user?.email) {
-      //   formDataToSend.append("email", formData.email);
-      // }
-      // if (formData.password) {
-      //   formDataToSend.append("password", formData.password);
-      //   formDataToSend.append("current_password", formData.current_password);
-      // }
-      // if (formData.profile_image) {
-      //   formDataToSend.append("profile_image", formData.profile_image);
-      // }
-
       // Immer die Daten senden, unabhängig von Änderungen
       if (formData.username !== session?.user?.username) {
         formDataToSend.append("username", formData.username);
+        hasChanges = true;
       }
 
       if (formData.email !== session?.user?.email) {
         formDataToSend.append("email", formData.email);
+        hasChanges = true;
       }
 
-      if (formData.newPassword) {
-        formDataToSend.append("password", formData.newPassword);
+      if (
+        formData.password &&
+        formData.currentPassword &&
+        formData.password_confirmation
+      ) {
+        console.log("Sending password update:", {
+          current_password: formData.currentPassword,
+          password: formData.password,
+          password_confirmation: formData.password_confirmation,
+        });
+
         formDataToSend.append("current_password", formData.currentPassword);
+        formDataToSend.append("password", formData.password);
+        formDataToSend.append(
+          "password_confirmation",
+          formData.password_confirmation
+        );
+        hasChanges = true;
       }
 
       if (formData.profile_image) {
         formDataToSend.append("profile_image", formData.profile_image);
+        hasChanges = true;
+      }
+
+      // Nur API-Aufruf machen, wenn es Änderungen gibt
+      if (!hasChanges) {
+        toast.info("No changes to update");
+        setIsLoading(false);
+        return;
       }
 
       // Debug-Logging
       console.log(
-        "FormData entries:",
+        "Sending update with data:",
         Object.fromEntries(formDataToSend.entries())
       );
 
@@ -145,7 +156,6 @@ export default function ProfileForm() {
             <Input
               id="current_password"
               type="password"
-              name="password"
               value={formData.currentPassword}
               onChange={(e) =>
                 setFormData({ ...formData, currentPassword: e.target.value })
@@ -154,27 +164,30 @@ export default function ProfileForm() {
           </div>
 
           <div className="grid gap-2">
-            <label htmlFor="newPassword">New Password</label>
+            <label htmlFor="password">New Password</label>
             <Input
-              id="newPassword"
+              id="password"
               type="password"
               // name="password_confirmation"
-              value={formData.newPassword}
+              value={formData.password}
               onChange={(e) =>
-                setFormData({ ...formData, newPassword: e.target.value })
+                setFormData({ ...formData, password: e.target.value })
               }
             />
           </div>
 
           <div className="grid gap-2">
-            <label htmlFor="confirmNewPassword">Confirm New Password</label>
+            <label htmlFor="password_confirmation">Confirm New Password</label>
             <Input
-              id="confirmNewPassword"
+              id="password_confirmation"
               type="password"
               // name="password_confirmation"
-              value={formData.confirmPassword}
+              value={formData.password_confirmation}
               onChange={(e) =>
-                setFormData({ ...formData, confirmPassword: e.target.value })
+                setFormData({
+                  ...formData,
+                  password_confirmation: e.target.value,
+                })
               }
             />
           </div>

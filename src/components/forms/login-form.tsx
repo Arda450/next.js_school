@@ -20,22 +20,20 @@ export default function LoginForm({ setFormContext }: LoginFormProps) {
   // state speichert die aktuelle Phase der Aktion (loading, success, error) und eventuelle Fehler
   // useActionState ruft die Login Funktion vom auth-actions.ts auf und aktualisiert den state
   const [state, loginAction] = useActionState(login, undefined);
-  const router = useRouter();
-
-  // Weiterleitung nach erfolgreichem Login
 
   // useEffect überwacht den state und führt die entsprechenden Aktionen aus
   useEffect(() => {
     // Für Toast und Weiterleitung nach erfolgreichem Login
     if (state?.status === "success") {
-      router.push("/protected");
       toast.success("You are logged in! Welcome back!");
+      window.location.href = "/protected";
     }
     // Für Toast bei Login-Fehlern
     if (state?.status === "error") {
-      toast.error(state.error || "Login failed");
+      console.error("Login error:", state.error); // Debug-Logging
+      toast.error(state.error || "Login failed, please check your credentials");
     }
-  }, [state, router]);
+  }, [state]);
 
   // handleLogin ist die Funktion, die aufgerufen wird, wenn das Formular abgeschickt wird
   // Übergibt die FormData an die loginAction

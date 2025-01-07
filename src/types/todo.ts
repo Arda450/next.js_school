@@ -16,6 +16,7 @@ export interface Todo {
   shared_with?: string[]; // ein todo kann mit mehreren usern geteilt werden, deshalb ein array
   shared_by?: string; // ein todo wird nur von einem user geteilt, deshalb kein array, sondern ein string
   is_due_soon?: boolean;
+  is_overdue?: boolean;
 }
 
 export interface TodoListProps {

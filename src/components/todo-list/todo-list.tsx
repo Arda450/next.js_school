@@ -19,12 +19,17 @@ import { useTodos } from "@/components/todos/TodoContext";
 import { useEffect, useState } from "react";
 import { Todo, TodoListProps } from "@/types/todo";
 import KebabMenu from "@/components/ui/kebap-menu";
-import { isToday, parseISO } from "date-fns";
 import { cn } from "@/lib/utils";
 
 export default function TodoList({ session }: Omit<TodoListProps, "todos">) {
-  const { todos, sharedTodos, filteredTodos, searchQuery, refreshTodos } =
-    useTodos();
+  const {
+    todos,
+    sharedTodos,
+    filteredTodos,
+    searchQuery,
+    refreshTodos,
+    activeTag,
+  } = useTodos();
   const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
   const [dialogType, setDialogType] = useState<"edit" | "delete" | null>(null);
 
@@ -42,17 +47,19 @@ export default function TodoList({ session }: Omit<TodoListProps, "todos">) {
     setDialogType("edit");
   };
 
-  const displayTodos = searchQuery ? filteredTodos : [...todos, ...sharedTodos];
+  // const displayTodos = searchQuery ? filteredTodos : [...todos, ...sharedTodos];
 
   return (
     <>
       <div className="grid gap-6 max-w-3xl mx-auto">
-        {displayTodos.length === 0 ? (
+        {filteredTodos.length === 0 ? (
           <div className="text-center p-4 text-gray-500">
-            {searchQuery ? "Keine Todos gefunden" : "Keine Todos vorhanden"}
+            {searchQuery || activeTag
+              ? "Keine Todos gefunden"
+              : "Keine Todos vorhanden"}
           </div>
         ) : (
-          displayTodos.map((todo) => {
+          filteredTodos.map((todo) => {
             // Prüfe, ob das Todo in sharedTodos ist
             const isSharedWithMe = sharedTodos.some(
               (sharedTodo) => sharedTodo.id === todo.id
@@ -67,7 +74,7 @@ export default function TodoList({ session }: Omit<TodoListProps, "todos">) {
               <Card
                 key={todo.id}
                 className={cn(
-                  "relative p-2 rounded-lg shadow-md border border-gray-200 hover:shadow-lg transition-shadow"
+                  "relative p-2 rounded-lg shadow-md bg-slate-50 border border-gray-200 hover:shadow-lg transition-shadow"
                 )}
               >
                 {(isSharedWithMe || isSharedByMe) && (
@@ -89,9 +96,18 @@ export default function TodoList({ session }: Omit<TodoListProps, "todos">) {
                 <CardHeader>
                   <CardTitle className="text-lg font-semibold text-gray-800 flex items-center gap-2">
                     {todo.title}
-                    {todo.is_due_soon && (
-                      <span className="inline-block px-2 py-1 text-xs font-medium text-red-800 bg-red-100 rounded-full">
-                        Due soon
+                    {(todo.is_due_soon || todo.is_overdue) && (
+                      <span
+                        className={cn(
+                          "inline-block px-2 py-1 text-xs font-medium rounded-full",
+                          {
+                            "bg-red-600 text-black font-bold": todo.is_overdue,
+                            "bg-red-100 text-red-800":
+                              todo.is_due_soon && !todo.is_overdue,
+                          }
+                        )}
+                      >
+                        {todo.is_overdue ? "DUE" : "Due soon"}
                       </span>
                     )}
                   </CardTitle>
