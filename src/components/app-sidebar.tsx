@@ -24,17 +24,20 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
+  useSidebar,
 } from "@/components/ui/sidebar";
-import { useUser } from "@/components/user/UserContext";
 import { useSession } from "next-auth/react";
-import { useTodos } from "@/components/todos/TodoContext";
-import { useRouter } from "next/navigation";
+import { useTodos } from "@/components/todos/todo-context";
+import { usePathname, useRouter } from "next/navigation";
+import Image from "next/image";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { user } = useUser();
   const { status } = useSession();
-  const router = useRouter(); // NEU: Router importieren
+  const router = useRouter();
   const { setActiveTag, activeTag } = useTodos();
+  const { isMobile } = useSidebar();
+  const pathname = usePathname();
+  const isHomePage = pathname === "/protected";
 
   const handleTagClick = (tag: string) => {
     if (activeTag === tag) {
@@ -52,15 +55,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   if (status === "loading") return null;
 
   const data = {
-    user: {
-      username: user?.username || "Guest",
-      email: user?.email || "",
-      avatar: user?.avatar || "/avatars/shadcn.jpg",
-    },
     appInfo: {
       name: "Todo Stream",
       description: "Your Todo App",
-      icon: GalleryVerticalEnd, // hier kommt das logo hin
+      icon: "/images/icon.svg",
       url: "/protected",
     },
     navMain: [
@@ -87,6 +85,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         id: "categories",
         title: "Find by category",
         icon: Search,
+        isHidden: !isHomePage, // Verstecke die Kategorien auf anderen Seiten
         items: [
           {
             id: "collaboration",
@@ -101,30 +100,40 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             title: "Personal",
             onClick: () => handleTagClick("Personal"),
             active: activeTag === "Personal",
+            disabled: !isHomePage, // Deaktiviere die Items
+            className: !isHomePage ? "opacity-50 cursor-not-allowed" : "",
           },
           {
             id: "work",
             title: "Work",
             onClick: () => handleTagClick("Work"),
             active: activeTag === "Work",
+            disabled: !isHomePage, // Deaktiviere die Items
+            className: !isHomePage ? "opacity-50 cursor-not-allowed" : "",
           },
           {
             id: "school",
             title: "School",
             onClick: () => handleTagClick("School"),
             active: activeTag === "School",
+            disabled: !isHomePage, // Deaktiviere die Items
+            className: !isHomePage ? "opacity-50 cursor-not-allowed" : "",
           },
           {
             id: "low_priority",
             title: "Low priority",
             onClick: () => handleTagClick("Low Priority"),
             active: activeTag === "Low Priority",
+            disabled: !isHomePage, // Deaktiviere die Items
+            className: !isHomePage ? "opacity-50 cursor-not-allowed" : "",
           },
           {
             id: "urgent",
             title: "Urgent",
             onClick: () => handleTagClick("Urgent"),
             active: activeTag === "Urgent",
+            disabled: !isHomePage, // Deaktiviere die Items
+            className: !isHomePage ? "opacity-50 cursor-not-allowed" : "",
           },
         ],
       },
@@ -137,7 +146,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             id: "profile",
             title: "Profile",
             icon: User,
-            onClick: handleProfileClick, // NEU: Click-Handler statt URL
+            onClick: handleProfileClick,
           },
           {
             id: "theme",
@@ -166,15 +175,21 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   };
 
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar collapsible={isMobile ? "offcanvas" : "icon"} {...props}>
       <SidebarHeader>
         <Link
           href={data.appInfo.url}
-          className="group hover:no-underline transition-all duration-1000 cursor-pointer"
+          className="group hover:no-underline transition-all duration-1000"
         >
           <div className="flex items-center space-x-4 rounded-lg p-2 transition-all duration-200 group-hover:bg-gray-200 cursor-pointer">
-            <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground cursor-pointer">
-              <data.appInfo.icon className="size-5" />
+            <div className="flex">
+              <Image
+                src={data.appInfo.icon}
+                alt={data.appInfo.name}
+                width={32}
+                height={32}
+                className="size-8"
+              />
             </div>
             <div className="group-data-[collapsible=icon]:hidden">
               <h2 className="text-base font-semibold transition-all duration-1000 cursor-pointer">
@@ -192,9 +207,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavProjects projects={data.projects} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser />
       </SidebarFooter>
-      <SidebarRail />
+      {!isMobile && <SidebarRail />}
     </Sidebar>
   );
 }

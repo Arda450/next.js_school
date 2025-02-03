@@ -1,6 +1,6 @@
 "use client";
 
-import { BadgeCheck, Bell, LogOut, Sparkles } from "lucide-react";
+import { BadgeCheck, Bell, LogOut } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -8,7 +8,6 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -18,29 +17,17 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { CaretSortIcon, ComponentPlaceholderIcon } from "@radix-ui/react-icons";
-import { logout } from "@/actions/auth-actions"; // Importiere die Logout-Funktion
-import { useRouter } from "next/navigation"; // Importiere useRouter
+import { CaretSortIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
-import { useUser } from "./user/UserContext";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
+import { useUser } from "./user/user-context";
 
-interface NavUserProps {
-  user: {
-    username: string;
-    email: string;
-    avatar: string;
-  };
-}
-
-export function NavUser({ user }: NavUserProps) {
+export function NavUser() {
+  const { data: session } = useSession();
   const { isMobile } = useSidebar();
-  const router = useRouter(); // Router für Navigation
-  const { clearUser } = useUser();
+  const { avatarUrl } = useUser();
 
-  if (status === "loading" || !user) {
-    return null;
-  }
+  if (!session?.user) return null;
 
   return (
     <SidebarMenu>
@@ -52,12 +39,26 @@ export function NavUser({ user }: NavUserProps) {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user.avatar} alt={user.username} />
-                <AvatarFallback className="rounded-lg">A</AvatarFallback>
+                {avatarUrl ? (
+                  <AvatarImage
+                    src={avatarUrl}
+                    alt={`${session.user.username}'s avatar`}
+                    className="object-cover"
+                    onError={(e) => {
+                      e.currentTarget.src = "/default-avatar.png";
+                    }}
+                  />
+                ) : (
+                  <AvatarFallback>
+                    {session.user.username?.[0]?.toUpperCase() || "?"}
+                  </AvatarFallback>
+                )}
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">{user.username}</span>
-                <span className="truncate text-xs">{user.email}</span>
+                <span className="truncate font-semibold">
+                  {session.user.username}
+                </span>
+                <span className="truncate text-xs">{session.user.email}</span>
               </div>
               <CaretSortIcon className="ml-auto size-4" />
             </SidebarMenuButton>

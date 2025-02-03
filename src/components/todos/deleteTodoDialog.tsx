@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { Todo } from "@/types/todo";
-import { useTodos } from "@/components/todos/TodoContext";
+import { useTodos } from "@/components/todos/todo-context";
 import { Ban } from "lucide-react";
 import {
   Tooltip,
@@ -68,7 +68,7 @@ export default function DeleteButton({
       </Tooltip>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Todo löschen?</AlertDialogTitle>
+          <AlertDialogTitle>Delete Todo?</AlertDialogTitle>
           <AlertDialogDescription>
             Do you really want to delete this todo? This action cannot be
             undone.
@@ -78,7 +78,7 @@ export default function DeleteButton({
           <AlertDialogCancel asChild>
             <Button variant="outline">
               <Ban className="h-4 w-4 mr-2" />
-              Abbrechen
+              Cancel
             </Button>
           </AlertDialogCancel>
           <AlertDialogAction asChild className="px-0">

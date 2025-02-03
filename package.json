@@ -22,6 +22,7 @@
     "@radix-ui/react-scroll-area": "1.2.2",
     "@radix-ui/react-separator": "1.1.0",
     "@radix-ui/react-slot": "1.1.0",
+    "@radix-ui/react-tabs": "1.1.2",
     "@radix-ui/react-toast": "1.2.2",
     "@radix-ui/react-tooltip": "1.1.4",
     "class-variance-authority": "0.7.0",
@@ -43,7 +44,6 @@
     "zod": "3.23.8"
   },
   "devDependencies": {
-    "@shadcn/ui": "0.0.4",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
@@ -51,6 +51,7 @@
     "eslint": "^8",
     "eslint-config-next": "15.0.2",
     "postcss": "^8.4.47",
+    "shadcn-ui": "0.9.4",
     "tailwindcss": "^3.4.14",
     "ts-node": "10.9.2",
     "typescript": "^5"

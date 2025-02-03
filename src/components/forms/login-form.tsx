@@ -1,7 +1,6 @@
 "use client";
-
+import HideShowInput from "@/components/ui/input-hide-show";
 import { Input } from "../ui/input";
-import { FormContext } from "@/types/enums/form-context";
 import { useEffect } from "react";
 import { login } from "@/actions/auth-actions";
 import { useActionState } from "react";
@@ -9,51 +8,42 @@ import { useFormStatus } from "react-dom";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 
-interface LoginFormProps {
-  setFormContext: (context: FormContext) => void;
-}
-
-export default function LoginForm({ setFormContext }: LoginFormProps) {
+export default function LoginForm() {
   // useActionState gibt ein Array zurück, das den state und eine Funktion (loginAction) enthält, um die Aktion auszuführen
   // state speichert die aktuelle Phase der Aktion (loading, success, error) und eventuelle Fehler
   // useActionState ruft die Login Funktion vom auth-actions.ts auf und aktualisiert den state
-  const [state, loginAction] = useActionState(login, undefined);
+  const [state, loginAction] = useActionState(login, {
+    status: null,
+    error: null,
+    errors: {},
+  });
 
   // useEffect überwacht den state und führt die entsprechenden Aktionen aus
   useEffect(() => {
-    // Für Toast und Weiterleitung nach erfolgreichem Login
     if (state?.status === "success") {
-      toast.success("You are logged in! Welcome back!");
+      toast.success("You are logged in!");
       window.location.href = "/protected";
     }
     // Für Toast bei Login-Fehlern
-    if (state?.status === "error") {
-      console.error("Login error:", state.error); // Debug-Logging
-      toast.error(state.error || "Login failed, please check your credentials");
+    if (state?.status === "error" && state.error) {
+      toast.error(state.error);
     }
   }, [state]);
 
-  // handleLogin ist die Funktion, die aufgerufen wird, wenn das Formular abgeschickt wird
-  // Übergibt die FormData an die loginAction
-  const handleLogin = (formData: FormData) => {
-    loginAction(formData);
-  };
+  const hasFieldErrors = state?.errors && Object.keys(state.errors).length > 0;
+  const showErrorBorder = (fieldName: string) =>
+    hasFieldErrors && state?.errors?.[fieldName]
+      ? "outline outline-red-500 outline-1"
+      : "";
 
   return (
-    <form className="flex flex-col gap-2" action={handleLogin}>
-      {state?.status === "error" && (
-        <div className="flex flex-col text-red-500 text-sm">
-          {state.error && <span>{state.error}</span>}
-          {state.errors?.email?.map((err: string, index: number) => (
-            <span key={index}>{err}</span>
-          ))}
-          {state.errors?.password?.map((err: string, index: number) => (
-            <span key={index}>{err}</span>
-          ))}
-        </div>
+    <form className="flex flex-col gap-2" action={loginAction}>
+      {/* Zeige "Wrong credentials" nur wenn es Validierungsfehler gibt */}
+      {hasFieldErrors && (
+        <div className="text-red-500 text-sm mb-2">Wrong credentials</div>
       )}
+
       <div>
         <Label htmlFor="email">Email</Label>
         <Input
@@ -69,27 +59,17 @@ export default function LoginForm({ setFormContext }: LoginFormProps) {
       </div>
       <div>
         <Label htmlFor="password">Password</Label>
-        <Input
+        <HideShowInput
           className={
             state?.errors?.password ? "outline outline-red-500 outline-1" : ""
           }
-          autoComplete="password"
+          autoComplete="current-password"
           id="password"
-          type="password"
           name="password"
         />
       </div>
       {/*This is the function down below in the code*/}
       <SubmitButton />
-      <p className="mt-4 self-end">
-        Need an account?
-        <span
-          onClick={() => setFormContext(FormContext.REGISTER)}
-          className="font-semibold ml-2 cursor-pointer"
-        >
-          Register now
-        </span>
-      </p>
     </form>
   );
 }

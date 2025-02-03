@@ -25,12 +25,12 @@ function KebabMenu({ className, onEdit, todo }: KebabMenuProps) {
           </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuItem onClick={onEdit}>Todo bearbeiten</DropdownMenuItem>
+          <DropdownMenuItem onClick={onEdit}>Edit Todo</DropdownMenuItem>
           <DeleteButton
             todo={todo}
             trigger={
               <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                Todo löschen
+                Delete Todo
               </DropdownMenuItem>
             }
           />

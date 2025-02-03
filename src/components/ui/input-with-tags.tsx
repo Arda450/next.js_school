@@ -49,7 +49,6 @@ export default function InputWithTags({
   return (
     <div className="space-y-4">
       <div>
-        <Label htmlFor="tags-input">{label}</Label>
         <div className="mt-1 flex flex-wrap gap-2 p-2 border rounded-lg min-h-[2.5rem]">
           {selectedTags.map((tag) => (
             <span

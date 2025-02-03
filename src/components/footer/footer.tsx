@@ -1,18 +1,83 @@
-export const Footer = () => {
+"use client";
+
+import Link from "next/link";
+import { useSidebar } from "@/components/ui/sidebar";
+import { cn } from "@/lib/utils";
+import { usePathname } from "next/navigation";
+
+export function Footer() {
+  const pathname = usePathname();
+  const isProtectedRoute = pathname?.startsWith("/protected");
+
+  if (isProtectedRoute) {
+    return <ProtectedFooter />;
+  }
+
+  return <PublicFooter />;
+}
+
+function PublicFooter() {
   return (
-    <div className="border-t border-black w-full h-20 m-auto flex items-center">
-      <div className="grid grid-cols-12 w-full h-full">
-        <div className="col-span-5 border-r border-black flex items-center px-16">
-          <p>&copy; 2024 by Arda Karadavut</p>
+    <footer className="footer">
+      <div className="footer-container">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-2">
+          <div className="text-sm text-muted-foreground">
+            © {new Date().getFullYear()} Todo Stream. All rights reserved.
+          </div>
+          <nav className="flex gap-4 text-sm text-muted-foreground">
+            <Link
+              href="/legal/imprint"
+              className="hover:text-foreground transition-colors"
+            >
+              Imprint
+            </Link>
+            <Link
+              href="/legal/privacy"
+              className="hover:text-foreground transition-colors"
+            >
+              Privacy Policy
+            </Link>
+          </nav>
         </div>
-        <div className="col-span-2 border-r border-black flex items-center px-12">
-          Area 2
-        </div>
-        <div className="col-span-2 border-r border-black flex items-center px-12">
-          Area 3
-        </div>
-        <div className="col-span-3 flex items-center px-16">Area 4</div>
       </div>
-    </div>
+    </footer>
   );
-};
+}
+
+function ProtectedFooter() {
+  const { state } = useSidebar();
+
+  return (
+    <footer
+      className={cn(
+        "footer",
+        state === "expanded"
+          ? "pl-[var(--sidebar-width)]"
+          : "pl-[var(--sidebar-width-icon)]"
+      )}
+    >
+      <div className="footer-container">
+        <div className="flex gap-4 items-center">
+          <span className="text-sm text-muted-foreground">
+            © {new Date().getFullYear()} Todo Stream. All rights reserved.
+          </span>
+        </div>
+
+        <nav className="flex gap-6 text-sm text-muted-foreground">
+          <Link
+            href="/legal/imprint"
+            className="hover:text-foreground transition-colors"
+          >
+            Imprint
+          </Link>
+          <Link
+            href="/legal/privacy"
+            className="hover:text-foreground transition-colors"
+          >
+            Privacy Policy
+          </Link>
+        </nav>
+      </div>
+    </footer>
+  );
+}

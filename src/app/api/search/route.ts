@@ -25,9 +25,7 @@ export async function GET(request: NextRequest) {
 
     // Backend-Anfrage mit korrekten Headers
     const response = await fetch(
-      `${
-        process.env.NEXT_PUBLIC_BACKEND_URL
-      }/api/search?term=${encodeURIComponent(term)}`,
+      `${process.env.BACKEND_URL}/api/search?term=${encodeURIComponent(term)}`,
       {
         headers: {
           Authorization: `Bearer ${session.accessToken}`,

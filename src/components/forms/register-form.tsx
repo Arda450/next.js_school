@@ -1,35 +1,35 @@
 // // Läuft auf der Client Seite
 "use client";
 
+import HideShowInput from "@/components/ui/input-hide-show";
 import { register } from "@/actions/auth-actions";
-import { FormContext } from "@/types/enums/form-context";
-
-// import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
-// import { useFormState, useFormStatus } from "react-dom";
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { toast } from "sonner";
 
 interface RegisterFormProps {
-  setFormContext: (context: FormContext) => void;
+  onLoginClick: () => void;
 }
 
-export default function RegisterForm({ setFormContext }: RegisterFormProps) {
+export default function RegisterForm({ onLoginClick }: RegisterFormProps) {
   const [state, registerAction] = useActionState(register, undefined);
 
   useEffect(() => {
     if (state?.status === "success") {
-      toast.success("Registration successful! Please log in.");
-      setFormContext(FormContext.LOGIN);
+      const timer = setTimeout(() => {
+        toast.success("Registration successful! Please log in.");
+        onLoginClick();
+      }, 0);
+      return () => clearTimeout(timer);
     }
     if (state?.status === "error") {
       toast.error(state.error || "Registration failed");
     }
-  }, [state, setFormContext]);
+  }, [state, onLoginClick]);
 
   // handleRegister ist die Funktion, die aufgerufen wird, wenn das Formular abgeschickt wird
   const handleRegister = (formData: FormData) => {
@@ -82,39 +82,29 @@ export default function RegisterForm({ setFormContext }: RegisterFormProps) {
       </div>
       <div>
         <Label htmlFor="password">Password</Label>
-        <Input
+        <HideShowInput
           className={`${
             state?.errors?.password ? " outline outline-red-500 outline-1" : ""
           }`}
           id="password"
-          type="password"
           name="password"
+          autoComplete="new-password"
         />
       </div>
       <div>
         <Label htmlFor="confirmPassword">Confirm Password</Label>
-        <Input
+        <HideShowInput
           className={`${
             state?.errors?.password_confirmation
               ? " outline outline-red-500 outline-1"
               : ""
           }`}
           id="confirmPassword"
-          type="password"
           name="password_confirmation"
+          autoComplete="new-password"
         />
       </div>
       <SubmitButton />
-
-      <p className="mt-4 self-end">
-        Already have an account?
-        <span
-          onClick={() => setFormContext(FormContext.LOGIN)}
-          className="font-semibold ml-2 cursor-pointer"
-        >
-          Login now
-        </span>
-      </p>
     </form>
   );
 }

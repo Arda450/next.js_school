@@ -15,11 +15,13 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import EditTodoForm from "@/components/forms/edit-todo-form";
-import { useTodos } from "@/components/todos/TodoContext";
+import { useTodos } from "@/components/todos/todo-context";
 import { useEffect, useState } from "react";
 import { Todo, TodoListProps } from "@/types/todo";
 import KebabMenu from "@/components/ui/kebap-menu";
+import { Share } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { UsersRound } from "lucide-react";
 
 export default function TodoList({ session }: Omit<TodoListProps, "todos">) {
   const {
@@ -74,18 +76,31 @@ export default function TodoList({ session }: Omit<TodoListProps, "todos">) {
               <Card
                 key={todo.id}
                 className={cn(
-                  "relative p-2 rounded-lg shadow-md bg-slate-50 border border-gray-200 hover:shadow-lg transition-shadow"
+                  "relative flex flex-col overflow-hidden transition-all hover:shadow-md",
+                  {
+                    "opacity-50": todo.status === "completed",
+                  }
                 )}
               >
                 {(isSharedWithMe || isSharedByMe) && (
-                  <div
-                    className={`absolute left-0 top-0 bottom-0 w-3 h-full rounded-l-lg
-                ${
-                  isSharedWithMe
-                    ? "bg-gradient-to-r from-blue-100 via-blue-200 to-blue-300"
-                    : "bg-gradient-to-r from-green-100 via-green-200 to-green-300 border-dashed"
-                }`}
-                  ></div>
+                  <div className="absolute top-2 right-12 flex items-center gap-1">
+                    <div
+                      className={cn(
+                        "rounded-full p-1.5 bg-opacity-90 backdrop-blur-sm",
+                        {
+                          "bg-blue-100 ": isSharedWithMe,
+                          "bg-green-100 ": isSharedByMe,
+                        }
+                      )}
+                    >
+                      <UsersRound
+                        className={cn("w-3.5 h-3.5 transition-colors", {
+                          "text-blue-600": isSharedWithMe,
+                          "text-green-600": isSharedByMe,
+                        })}
+                      />
+                    </div>
+                  </div>
                 )}
 
                 <KebabMenu
@@ -118,13 +133,14 @@ export default function TodoList({ session }: Omit<TodoListProps, "todos">) {
                     {todo.description}
                   </CardDescription>
 
-                  <div className="flex justify-between items-center text-sm text-gray-500">
+                  <div className="flex flex-col md:flex-row justify-between items-center text-sm text-gray-500 gap-2 md:gap-4">
                     {todo.due_date && (
                       <div className="flex items-center gap-1">
                         <span className="font-medium text-gray-600">Due:</span>
                         {todo.due_date}
                       </div>
                     )}
+
                     {todo.tags && todo.tags.length > 0 && (
                       <div className="flex flex-wrap gap-2">
                         {todo.tags.map((tag) => (
@@ -137,6 +153,7 @@ export default function TodoList({ session }: Omit<TodoListProps, "todos">) {
                         ))}
                       </div>
                     )}
+
                     {todo.status && (
                       <div
                         className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium shadow-sm ${
@@ -151,6 +168,7 @@ export default function TodoList({ session }: Omit<TodoListProps, "todos">) {
                       </div>
                     )}
                   </div>
+
                   {isSharedWithMe && (
                     <div className=" text-sm text-blue-800 mt-4">
                       Todo shared with you by: {todo.shared_by}
@@ -174,10 +192,8 @@ export default function TodoList({ session }: Omit<TodoListProps, "todos">) {
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Todo bearbeiten</DialogTitle>
-            <DialogDescription>
-              Bearbeite die Details deines Todos
-            </DialogDescription>
+            <DialogTitle>Edit Todo</DialogTitle>
+            <DialogDescription>Edit the details of your todo</DialogDescription>
           </DialogHeader>
           {selectedTodo && (
             <EditTodoForm

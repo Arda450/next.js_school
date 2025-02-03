@@ -12,12 +12,14 @@ export default async function Home() {
   }
 
   return (
-    <div className="p-6">
-      <div className="flex items-center justify-between mb-6">
-        <AddTodoForm session={session} />
-      </div>
-      <div>
-        <TodoListContainer />
+    <div className="w-full">
+      <div className="space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <AddTodoForm session={session} />
+        </div>
+        <div>
+          <TodoListContainer />
+        </div>
       </div>
     </div>
   );

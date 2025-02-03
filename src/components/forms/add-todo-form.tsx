@@ -16,20 +16,20 @@ export default function AddTodoForm({ session }: AddTodoFormProps) {
   // State wird im parent definiert
   const [isFormVisible, setIsFormVisible] = useState(false);
 
-  // funktion wird im parent definiert
+  // funktion wird im parent definiert und wird als prop an die kindkomponente übergeben
   const toggleFormVisibility = () => {
     setIsFormVisible(!isFormVisible);
   };
 
   return (
-    <>
-      <div className="flex flex-1 flex-col gap-4 p-4">
+    <div className="w-full">
+      <div className="flex flex-1 flex-col gap-4">
         <div className="flex items-center justify-between">
-          <h1 className="text-xl font-bold">My To-Dos</h1>
+          <h1 className="text-lg sm:text-xl font-bold">My To-Dos</h1>
           <Button
             disabled={isFormVisible}
             onClick={toggleFormVisibility}
-            className="my-4 w-fit transition-all duration-200"
+            className="text-xs sm:text-md my-4 w-fit transition-all duration-200"
           >
             <span className="flex items-center gap-2 transition-all duration-200">
               <PlusIcon />
@@ -42,7 +42,7 @@ export default function AddTodoForm({ session }: AddTodoFormProps) {
         <div
           className={`transition-all duration-300 ease-in-out overflow-hidden ${
             isFormVisible
-              ? "max-h-[500px] opacity-100 scale-100" // Sichtbar
+              ? "max-h-[800px] opacity-100 scale-100" // Sichtbar
               : "max-h-0 opacity-0 scale-95 pointer-events-none" // Versteckt
           }`}
         >
@@ -50,6 +50,6 @@ export default function AddTodoForm({ session }: AddTodoFormProps) {
           <TodoForm onCancel={toggleFormVisibility} session={session} />
         </div>
       </div>
-    </>
+    </div>
   );
 }

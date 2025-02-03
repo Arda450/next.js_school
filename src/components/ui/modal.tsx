@@ -12,24 +12,23 @@ import {
 } from "../ui/dialog";
 
 interface ModalProps {
-  title: string;
+  title?: string;
   description?: string;
   children: ReactNode;
 }
 
-export const Modal = ({ title, description, children }: ModalProps) => {
+export const Modal = ({
+  title = "Modal",
+  description,
+  children,
+}: ModalProps) => {
   // this router is needed so that we can handle whenever the user
   // clicks the close button or clicks somewhere outside the modal range
   // since we are on a different route, we need to use the router to handle this
   const router = useRouter();
 
-  const handleOpenChange = () => {
-    // here we tell the router to go back in the router history by one
-    router.back();
-  };
-
   return (
-    <Dialog defaultOpen={true} open={true} onOpenChange={handleOpenChange}>
+    <Dialog defaultOpen={true} open={true} onOpenChange={() => router.back()}>
       <DialogOverlay>
         <DialogContent>
           <DialogHeader>

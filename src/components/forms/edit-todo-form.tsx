@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useTodos } from "../todos/TodoContext";
+import { useTodos } from "../todos/todo-context";
 import { toast } from "sonner";
 import { Todo } from "@/types/todo";
 import { cn } from "@/lib/utils";
@@ -55,7 +55,7 @@ export default function EditTodoForm({ todo, onClose }: EditTodoFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   // Zugriff auf die updateTodo-Funktion und das deleteTodo aus dem Kontext
-  const { updateTodo } = useTodos();
+  const { refreshTodos } = useTodos(); // aktualisiere die todo liste nach dem submit
 
   // console.log("Todo received:", todo); // Debugging
   // console.log("Due date:", todo.due_date); // Debugging
@@ -114,8 +114,7 @@ export default function EditTodoForm({ todo, onClose }: EditTodoFormProps) {
           result.message || "Fehler beim Aktualisieren des Todos"
         );
       }
-      // Nach erfolgreichem Update wird das Todo im globalen Zustand akutalisiert.
-      updateTodo(result.todo);
+      await refreshTodos(); // await stellt sicher, dass die todos neu geladen werden, bevor success message, modalschliessung und loading state zurückgesetzt werden
       toast.success("Todo wurde erfolgreich aktualisiert");
       onClose();
     } catch (error) {

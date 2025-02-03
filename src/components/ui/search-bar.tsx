@@ -1,9 +1,16 @@
 import { Input } from "@/components/ui/input";
 import { Search, X } from "lucide-react";
-import { useTodos } from "../todos/TodoContext";
+import { useTodos } from "../todos/todo-context";
+import { usePathname } from "next/navigation";
 
 export default function SearchBar() {
   const { setSearchQuery, searchQuery, activeTag, clearFilters } = useTodos();
+  const pathname = usePathname();
+  const isHomePage = pathname === "/protected";
+
+  if (!isHomePage) {
+    return null;
+  } // Versteckt die Suchleiste auf anderen Seiten
 
   return (
     <div className="flex items-center gap-4">
@@ -23,7 +30,7 @@ export default function SearchBar() {
           value={searchQuery}
           className="peer pe-9 ps-9"
           placeholder="Search Todos..."
-          type="search"
+          type="text"
           onChange={(e) => setSearchQuery(e.target.value)}
         />
         <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 text-muted-foreground/80">

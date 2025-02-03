@@ -12,7 +12,7 @@ declare module "next-auth" {
     id: string;
     username: string;
     email: string; // Hinzugefügt
-    profileImage?: string; // Optionales Profilbild
+    profile_image?: string; // Optionales Profilbild
     role?: string; // Rolle (falls erforderlich)
     token: string; // Access Token
   }
@@ -23,7 +23,7 @@ declare module "@auth/core/jwt" {
     id?: string; // Benutzer-ID
     username?: string; // Benutzername
     email?: string; // E-Mail-Adresse
-    profileImage?: string; // Optionales Profilbild
+    profile_image?: string; // Optionales Profilbild
     accessToken: string;
   }
 }

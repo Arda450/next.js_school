@@ -12,15 +12,12 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/todos`,
-      {
-        headers: {
-          Authorization: `Bearer ${session.accessToken}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await fetch(`${process.env.BACKEND_URL}/api/todos`, {
+      headers: {
+        Authorization: `Bearer ${session.accessToken}`,
+        "Content-Type": "application/json",
+      },
+    });
 
     if (!response.ok) {
       throw new Error("Backend request failed");
@@ -52,17 +49,14 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     console.log("Creating todo with body:", body);
 
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/todos`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${session.accessToken}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body), // Sende den kompletten Body
-      }
-    );
+    const response = await fetch(`${process.env.BACKEND_URL}/api/todos`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${session.accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body), // Sende den kompletten Body
+    });
 
     const data = await response.json();
     console.log("Backend response:", data);
@@ -95,17 +89,14 @@ export async function PATCH(request: NextRequest) {
     const body = await request.json();
     console.log("Updating todo with body:", body);
 
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/todos`,
-      {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${session.accessToken}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body), // sende den kompletten Body
-      }
-    );
+    const response = await fetch(`${process.env.BACKEND_URL}/api/todos`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${session.accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body), // sende den kompletten Body
+    });
 
     const data = await response.json();
     console.log("Backend response:", data);

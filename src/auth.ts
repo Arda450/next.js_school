@@ -1,4 +1,4 @@
-import NextAuth from "next-auth";
+import NextAuth, { User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 // hier wird der Token aus dem backend nach erfolgreichem login gespeichert und in den api anfragen verwendet
@@ -6,20 +6,20 @@ import CredentialsProvider from "next-auth/providers/credentials";
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     CredentialsProvider({
-      // name: "credentials",
       credentials: {
         email: {},
         password: {},
       },
-      async authorize(credentials) {
+      async authorize(credentials, request): Promise<User | null> {
         try {
-          if (!credentials?.email || !credentials?.password) return null;
-
+          if (!credentials?.email || !credentials?.password) {
+            throw new Error("Email and password are required");
+          }
           console.log("Login attempt for:", credentials.email); // Debug-Logging
 
           // Anfrage an das Backend zur Authentifizierung
           const response = await fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/login`,
+            `${process.env.BACKEND_URL}/api/auth/login`,
             {
               method: "POST",
               headers: {
@@ -37,21 +37,23 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           console.log("Login response:", data); // Debug-Logging
 
           if (!response.ok) {
-            console.error("Login failed:", data); // Debug-Logging
-            throw new Error(data.message || "Login failed");
+            // Gib die spezifische Fehlermeldung vom Backend zurück
+            throw new Error(data.message || "Authentication failed");
           }
 
-          if (response.ok && data.user) {
+          if (data.status === "success" && data.user) {
             return {
               id: data.user.id,
               username: data.user.username,
               email: data.user.email,
-              token: data.token,
+              profile_image: data.user.profile_image,
+              token: data.user.token,
             };
           }
+
           return null;
         } catch (error) {
-          console.error("Authorization error:", error);
+          console.error("Auth error:", error);
           throw error;
         }
       },
@@ -62,16 +64,31 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return !!auth; // überprüft, ob der Benutzer authentifiziert ist
     },
 
-    // der Token wird in den JWT-Callback eingefügt. Das ermöglicht, den Token in der Middleware oder Session zu verwenden.
+    // auth.ts
     async jwt({ token, user, trigger }: any) {
-      //console.log("JWT Token:", token);
-
-      if (trigger === "signIn") {
+      if (trigger === "update") {
+        // Hole die aktuellen Benutzerdaten beim Update
+        const response = await fetch(
+          `${process.env.BACKEND_URL}/api/user/profile`,
+          {
+            headers: {
+              Authorization: `Bearer ${token.accessToken}`,
+            },
+          }
+        );
+        if (response.ok) {
+          const data = await response.json();
+          token.username = data.user.username; // Aktualisiere den Benutzernamen
+          token.email = data.user.email; // Aktualisiere die E-Mail
+          token.profile_image = data.user.profile_image; // Aktualisiere das Profilbild
+        }
       }
+
       if (user) {
-        token.username = user.username; // Hier der `username` zum Token
+        token.username = user.username;
         token.email = user.email;
         token.accessToken = user.token;
+        token.profile_image = user.profile_image; // Füge das Profilbild hinzu
       }
       return token;
     },
@@ -84,7 +101,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         id: token.id,
         username: token.username,
         email: token.email,
-        profileImage: token.profileImage,
+        profile_image: token.profile_image,
       };
       session.accessToken = token.accessToken;
 

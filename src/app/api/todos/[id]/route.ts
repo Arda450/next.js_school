@@ -15,7 +15,7 @@ export async function DELETE(
     }
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/todos/${params.id}`,
+      `${process.env.BACKEND_URL}/api/todos/${params.id}`,
       {
         method: "DELETE",
         headers: {
@@ -25,7 +25,7 @@ export async function DELETE(
       }
     );
 
-    // Wenn die Löschung erfolgreich war (204 oder 200)
+    // Wenn die Löschung erfolgreich ist
     if (response.status === 204 || response.ok) {
       return NextResponse.json({
         status: "success",

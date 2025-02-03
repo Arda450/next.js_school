@@ -1,9 +1,9 @@
-// Server Component (kein "use client")
+// Server Component, kein "use client"
 import { auth } from "@/auth";
 import TodoList from "./todo-list";
 import { Todo } from "@/types/todo";
 
-// Daten-Fetching Logik
+// daten fetching logik
 async function getTodos(session: any) {
   if (!session?.accessToken) {
     return {
@@ -14,14 +14,11 @@ async function getTodos(session: any) {
   }
 
   try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/todos`,
-      {
-        headers: {
-          Authorization: `Bearer ${session.accessToken}`,
-        },
-      }
-    );
+    const response = await fetch(`${process.env.BACKEND_URL}/api/todos`, {
+      headers: {
+        Authorization: `Bearer ${session.accessToken}`,
+      },
+    });
 
     if (!response.ok) {
       throw new Error("Fehler beim Laden der Todos");

@@ -1,4 +1,3 @@
-// import { object, string } from "zod";
 import { z } from "zod";
 
 export const signInSchema = z.object({
@@ -35,8 +34,8 @@ const tagSchema = z.object({
 });
 
 export const todoSchema = z.object({
-  title: z.string().min(1, "Titel ist erforderlich").max(200),
-  description: z.string().min(1, "Beschreibung ist erforderlich").max(20000),
+  title: z.string().min(1, "Title is required").max(200),
+  description: z.string().min(1, "Description is required").max(20000),
   due_date: z.date().nullable().optional(),
   status: z.string(),
   tags: z.array(tagSchema).default([]),

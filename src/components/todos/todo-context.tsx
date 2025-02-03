@@ -114,6 +114,8 @@ export function TodoProvider({ children }: { children: ReactNode }) {
   }, []);
 
   // Modifiziere refreshTodos
+
+  // kontrolliere ob die todos geladen werden nach dem bearbeiten
   const refreshTodos = useCallback(async () => {
     try {
       const response = await fetch("/api/todos", {

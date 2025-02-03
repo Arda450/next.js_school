@@ -42,7 +42,6 @@ export const login = async (
   }
 
   try {
-    // Wenn der Login erfolgreich ist, den Benutzer anmelden
     const res = await signIn("credentials", {
       email: formData.get("email"),
       password: formData.get("password"),
@@ -52,19 +51,25 @@ export const login = async (
     if (res?.error) {
       return {
         status: "error",
-        error: res.error,
+        error:
+          res.error === "CredentialsSignin"
+            ? "Invalid email or password"
+            : res.error,
       };
     }
 
-    revalidatePath("/"); // Seite neu laden
-    // wenn "success" wird es im useActionState gespeichert und im useEffect ausgeführt (login-form.tsx)
+    revalidatePath("/");
     return { status: "success" };
   } catch (error) {
-    console.error("Login error:", error);
+    if (error instanceof AuthError) {
+      return {
+        status: "error",
+        error: "Invalid credentials",
+      };
+    }
     return {
       status: "error",
-      error:
-        error instanceof Error ? error.message : "An unexpected error occurred",
+      error: "An unexpected error occurred",
     };
   }
 };
@@ -72,11 +77,16 @@ export const login = async (
 // ###################################################################
 
 export const register = async (prevState: any, formData: FormData) => {
+  // Prüfe, ob es sich um einen wiederholten Aufruf handelt
+  if (prevState?.status === "success") {
+    return prevState;
+  }
+
   // if (!formData) {
   //   return { status: "error", error: "No data provided" };
   // }
   // fetch the backend here
-  console.log(process.env.NEXT_PUBLIC_BACKEND_URL);
+  console.log(process.env.BACKEND_URL);
   console.log("register triggered");
   console.log("formData");
   // Statt FormData in ein Array umzuwandeln, mache dies direkt im Frontend.
@@ -94,18 +104,15 @@ export const register = async (prevState: any, formData: FormData) => {
 
   try {
     // Sende Registrierungsanfrage an das Backend
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/register`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        // Hier würdest du den Benutzer im Backend registrieren
-        // Hier sendest du das JSON-Objekt
-        body: JSON.stringify(formDataObject),
-      }
-    );
+    const response = await fetch(`${process.env.BACKEND_URL}/api/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      // Hier würdest du den Benutzer im Backend registrieren
+      // Hier sendest du das JSON-Objekt
+      body: JSON.stringify(formDataObject),
+    });
 
     const data = await response.json();
 

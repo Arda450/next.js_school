@@ -42,9 +42,9 @@ export function NavMain({
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
                 <SidebarMenuButton className="w-full justify-between cursor-pointer">
-                  {item.icon && <item.icon />}
-                  <span>{item.title}</span>
-                  <ChevronRightIcon className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                  {item.icon && <item.icon className="h-4 w-4" />}
+                  <span className="flex-1 truncate">{item.title}</span>
+                  <ChevronRightIcon className="ml-auto h-4 w-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
               <CollapsibleContent>
@@ -61,7 +61,7 @@ export function NavMain({
                         {subItem.icon && (
                           <subItem.icon className="mr-2 h-4 w-4" />
                         )}
-                        {subItem.title}
+                        <span className="flex-1 truncate">{subItem.title}</span>
                         {subItem.isActive && (
                           <span className="ml-auto text-xs">✓</span>
                         )}
