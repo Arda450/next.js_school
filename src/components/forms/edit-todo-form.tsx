@@ -80,6 +80,7 @@ export default function EditTodoForm({ todo, onClose }: EditTodoFormProps) {
       status: todo.status || "open",
       due_date: todo.due_date ? parseDateString(todo.due_date) : undefined,
       tags: todo.tags || [],
+      // shared_with: todo.shared_with || [],
     },
   });
 
@@ -265,6 +266,31 @@ export default function EditTodoForm({ todo, onClose }: EditTodoFormProps) {
               </FormItem>
             )}
           />
+
+          {/* <FormField
+            control={form.control}
+            name="shared_with"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Share with Users</FormLabel>
+                <FormControl>
+                  <Input
+                    type="text"
+                    placeholder="Enter usernames (comma separated)"
+                    value={field.value.join(", ")}
+                    onChange={(e) => {
+                      const users = e.target.value
+                        .split(",")
+                        .map((u) => u.trim())
+                        .filter((u) => u.length > 0);
+                      field.onChange(users);
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          /> */}
 
           <div className="flex justify-end items-center space-x-2">
             <Button variant="outline" onClick={onClose} type="button">

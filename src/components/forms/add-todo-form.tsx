@@ -17,6 +17,7 @@ export default function AddTodoForm({ session }: AddTodoFormProps) {
   const [isFormVisible, setIsFormVisible] = useState(false);
 
   // funktion wird im parent definiert und wird als prop an die kindkomponente übergeben
+  // toggleformvisibility schliesst die todo form
   const toggleFormVisibility = () => {
     setIsFormVisible(!isFormVisible);
   };

@@ -15,21 +15,23 @@ import {
 import { Todo } from "@/types/todo";
 import { isPast, isToday, isTomorrow, startOfDay } from "date-fns";
 
-// Definition der Kontext-Struktur
+// das ist die kontext typ definition
+type TodoResponse = { success: boolean; message: string };
+
 type TodoContextType = {
   todos: Todo[]; // Liste aller Todos
   sharedTodos: Todo[]; // Liste aller geteilter Todos
   setSharedTodos: (todos: Todo[]) => void; // Funktion zum Setzen aller geteilter Todos
-  setTodos: (todos: Todo[]) => void; // Funktion zum Setzen aller Todos
-  addTodo: (todo: Todo) => void; // Funktion zum Hinzufügen eines Todos
+  setTodos: (todos: Todo[]) => void; // unktion zum setzen aller todos
+  addTodo: (todo: Todo) => void; // funktion zum hinzufügen eines todos
   updateTodo: (todo: Todo) => void; // Funktion zum Aktualisieren eines Todos
-  deleteTodo: (id: string) => Promise<boolean>; // Funktion zum Löschen eines Todos
+  deleteTodo: (id: string) => Promise<TodoResponse>; // Funktion zum Löschen eines Todos
   refreshTodos: () => Promise<void>; // Funktion zum Neuladen aller Todos
   searchQuery: string; // Suchbegriff
-  setSearchQuery: (query: string) => void; // Setter für Suchbegriff
+  setSearchQuery: (query: string) => void; // Setter für Suchbegriffe
   filteredTodos: Todo[]; // Gefilterte Todo-Liste
-  activeTag: string | null; // NEU
-  setActiveTag: (tag: string | null) => void; // NEU
+  activeTag: string | null;
+  setActiveTag: (tag: string | null) => void;
   clearFilters: () => void;
 };
 
@@ -97,8 +99,8 @@ export function TodoProvider({ children }: { children: ReactNode }) {
     const today = startOfDay(new Date());
 
     // Überprüfe den Status
-    const isOverdue = isPast(dueDate) && !isToday(dueDate); // Datum ist in der Vergangenheit UND nicht heute
-    const isDueSoon = isToday(dueDate) || isTomorrow(dueDate); // Datum ist heute ODER morgen
+    const isOverdue = isPast(dueDate) && !isToday(dueDate); // Datum ist in der Vergangenheit und nicht heute
+    const isDueSoon = isToday(dueDate) || isTomorrow(dueDate); // Datum ist heute oder morgen
 
     return {
       ...todo,
@@ -113,9 +115,7 @@ export function TodoProvider({ children }: { children: ReactNode }) {
     setSearchQuery("");
   }, []);
 
-  // Modifiziere refreshTodos
-
-  // kontrolliere ob die todos geladen werden nach dem bearbeiten
+  // ladet die todos neu nach dem bearbeiten oder hinzufügen
   const refreshTodos = useCallback(async () => {
     try {
       const response = await fetch("/api/todos", {
@@ -166,20 +166,27 @@ export function TodoProvider({ children }: { children: ReactNode }) {
     [checkDueStatus]
   );
 
-  const deleteTodo = useCallback(async (id: string): Promise<boolean> => {
+  const deleteTodo = useCallback(async (id: string) => {
     try {
       const response = await fetch(`/api/todos/${id}`, {
         method: "DELETE",
       });
 
-      if (response.status === 204 || response.ok) {
+      const data = await response.json();
+
+      if (response.ok) {
         setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
-        return true;
       }
-      return false;
+      return {
+        success: response.ok,
+        message: data.message,
+      };
     } catch (error) {
       console.error("Delete error:", error);
-      return false;
+      return {
+        success: false,
+        message: "Ein Fehler ist aufgetreten",
+      };
     }
   }, []);
 

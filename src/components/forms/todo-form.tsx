@@ -17,7 +17,7 @@ import {
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { error } from "console";
-import { useState } from "react"; // Für diee Zustandsverwaltung
+import { useCallback, useEffect, useState } from "react"; // Für diee Zustandsverwaltung
 import { useTodos } from "../todos/todo-context";
 import { toast } from "sonner";
 import { Session } from "next-auth";
@@ -72,33 +72,35 @@ export default function TodoForm({ onCancel, session }: TodoFormProps) {
       due_date: undefined,
       status: "open",
       tags: [],
-      shared_with: "",
+      shared_with: [],
     },
   });
 
   // User-Auswahl
   // Ändere die handleUserSelect Funktion wie folgt:
-  const handleUserSelect = (username: string) => {
-    // Verwende useCallback um die Funktion zu memoisieren
+
+  // Ändere die handleUserSelect Funktion wie folgt:
+  const handleUserSelect = useCallback((username: string) => {
     setSelectedUsers((prev) => {
       const newUsers = prev.includes(username)
         ? prev.filter((u) => u !== username)
         : [...prev, username];
 
-      // Verzögere die form.setValue Aktualisierung
-      setTimeout(() => {
-        form.setValue("shared_with", newUsers.join(","));
-      }, 0);
-
+      // Verschiebe setValue in einen useEffect
       return newUsers;
     });
-  };
+  }, []);
+
+  // Füge einen useEffect hinzu, der auf Änderungen von selectedUsers reagiert
+  useEffect(() => {
+    form.setValue("shared_with", selectedUsers);
+  }, [selectedUsers, form]);
 
   // Funktion wird im Child definiert mit toggleFormVisibility als onCancel
-  const handelCancel = () => {
-    form.reset();
-    setSelectedUsers([]); // Ausgewählte User zurücksetzen
-    onCancel();
+  const handleCancel = () => {
+    form.reset(); // inputfelder zurücksetzen
+    setSelectedUsers([]); // ausgewählte user zurücksetzen
+    onCancel(); // formular schliessen
   };
 
   const onSubmit = async (data: TodoFormValues) => {
@@ -126,9 +128,10 @@ export default function TodoForm({ onCancel, session }: TodoFormProps) {
         toast.success("To-Do created successfully!", {
           duration: 3000,
         });
-        form.reset(); // Formular zurücksetzen
+        form.reset(); // inputfelder zurücksetzen
+        setSelectedUsers([]); // Ausgewählte User zurücksetzen
         refreshTodos(); // Todos erneut laden
-        onCancel();
+        onCancel(); // formular schliessen
       } else {
         switch (response.status) {
           case 400:
@@ -193,12 +196,12 @@ export default function TodoForm({ onCancel, session }: TodoFormProps) {
           )}
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 min-w-[300px]">
           <FormField
             control={form.control}
             name="tags"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="w-full">
                 <FormLabel className="text-base font-semibold">Tags</FormLabel>
                 <InputWithTags
                   selectedTags={field.value || []}
@@ -327,9 +330,10 @@ export default function TodoForm({ onCancel, session }: TodoFormProps) {
           {/* Funktion toggleFormVisibility wird hier aufgerufen */}
           <Button
             variant="outline"
-            onClick={handelCancel}
+            onClick={handleCancel}
             type="button"
             className="min-w-[100px]"
+            aria-label="Cancel creating todo"
           >
             Cancel
           </Button>
@@ -338,6 +342,7 @@ export default function TodoForm({ onCancel, session }: TodoFormProps) {
             type="submit"
             disabled={isSubmitting} // standartmäßig disabled
             className="min-w-[100px]"
+            aria-label={isSubmitting ? "Creating todo..." : "Create todo"}
           >
             {isSubmitting ? "Creating..." : "Create"}
           </Button>

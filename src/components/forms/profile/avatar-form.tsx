@@ -9,6 +9,7 @@ import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { AVATAR_STYLES, AvatarStyle, generateAvatarUrl } from "@/lib/avatar";
 import { useUser } from "@/components/user/user-context";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function AvatarForm() {
   const { data: session, update } = useSession();
@@ -91,17 +92,33 @@ export default function AvatarForm() {
 
           <div className="w-full space-y-2">
             <label className="block text-sm font-medium">Avatar Style</label>
-            <select
-              className="w-full p-2 border rounded"
-              value={selectedStyle}
-              onChange={(e) => handleStyleChange(e.target.value as AvatarStyle)}
-            >
-              {AVATAR_STYLES.map((style) => (
-                <option key={style} value={style}>
-                  {style}
-                </option>
-              ))}
-            </select>
+            <ScrollArea className="h-[200px] w-full rounded-md border p-4">
+              <div className="grid grid-cols-2 gap-2 pr-4 md:grid-cols-3 lg:grid-cols-4">
+                {AVATAR_STYLES.map((style) => (
+                  <div
+                    key={style}
+                    className={`flex cursor-pointer items-center rounded-lg border p-2 transition-colors hover:bg-accent ${
+                      selectedStyle === style ? "border-primary bg-accent" : ""
+                    }`}
+                    onClick={() => handleStyleChange(style)}
+                  >
+                    <div className="flex items-center gap-2">
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage
+                          src={generateAvatarUrl(
+                            style,
+                            session?.user?.username || "preview"
+                          )}
+                          alt={style}
+                        />
+                        <AvatarFallback>?</AvatarFallback>
+                      </Avatar>
+                      <span className="text-sm">{style}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
           </div>
         </div>
 

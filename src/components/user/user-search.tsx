@@ -29,6 +29,8 @@ export function UserSearch({
   const [users, setUsers] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showResults, setShowResults] = useState(false);
+
   useEffect(() => {
     const searchUsers = async () => {
       setError(null);
@@ -75,15 +77,23 @@ export function UserSearch({
     return () => clearTimeout(timeoutId);
   }, [searchTerm]);
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+    setShowResults(true);
+  };
+
   return (
     <div className="relative w-full space-y-2">
       <Input
         id="user-search"
         type="text"
         value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
+        onChange={handleInputChange}
         placeholder={placeholder || "Type username to share..."}
         aria-label="Search users"
+        aria-expanded={showResults}
+        aria-controls="search-results"
+        aria-autocomplete="list"
         disabled={isLoading}
       />
 
@@ -97,11 +107,11 @@ export function UserSearch({
             >
               <span>{username}</span>
               <button
-                onClick={() => onSelect(username)} // Entfernt den User
-                className="text-muted-foreground hover:text-destructive"
+                onClick={() => onSelect(username)} // entferne den user
+                className="hover:text-destructive"
                 type="button"
               >
-                <X />
+                <X size={14} />
               </button>
             </div>
           ))}

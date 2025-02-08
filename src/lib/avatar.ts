@@ -1,13 +1,17 @@
 export const AVATAR_STYLES = [
+  "initials",
   "adventurer",
+  "adventurer-neutral",
   "avataaars",
+  "avataaars-neutral",
+  "fun-emoji",
   "bottts",
-  "funEmoji",
   "lorelei",
   "notionists",
-  "openPeeps",
   "personas",
-  "pixelArt",
+  "croodles",
+  "bottts-neutral",
+  "icons",
 ] as const;
 
 export type AvatarStyle = (typeof AVATAR_STYLES)[number];

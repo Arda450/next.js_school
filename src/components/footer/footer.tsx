@@ -20,25 +20,23 @@ function PublicFooter() {
   return (
     <footer className="footer">
       <div className="footer-container">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-2">
-          <div className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Todo Stream. All rights reserved.
-          </div>
-          <nav className="flex gap-4 text-sm text-muted-foreground">
-            <Link
-              href="/legal/imprint"
-              className="hover:text-foreground transition-colors"
-            >
-              Imprint
-            </Link>
-            <Link
-              href="/legal/privacy"
-              className="hover:text-foreground transition-colors"
-            >
-              Privacy Policy
-            </Link>
-          </nav>
+        <div className="text-sm text-muted-foreground">
+          © {new Date().getFullYear()} Todo Stream. All rights reserved.
         </div>
+        <nav className="flex gap-6 text-sm text-muted-foreground">
+          <Link
+            href="/legal/imprint"
+            className="hover:text-foreground transition-colors"
+          >
+            Imprint
+          </Link>
+          <Link
+            href="/legal/privacy"
+            className="hover:text-foreground transition-colors"
+          >
+            Privacy Policy
+          </Link>
+        </nav>
       </div>
     </footer>
   );
@@ -57,7 +55,7 @@ function ProtectedFooter() {
       )}
     >
       <div className="footer-container">
-        <div className="flex gap-4 items-center">
+        <div>
           <span className="text-sm text-muted-foreground">
             © {new Date().getFullYear()} Todo Stream. All rights reserved.
           </span>

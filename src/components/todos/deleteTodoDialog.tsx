@@ -38,11 +38,12 @@ export default function DeleteButton({
 
   const handleDelete = async () => {
     try {
-      const res = await deleteTodo(todo.id);
-      if (res) {
-        toast.success("Todo wurde erfolgreich gelöscht"); // Dialog schließen
+      const result = await deleteTodo(todo.id);
+      if (result.success) {
+        toast.success(result.message);
+        // Optional: Dialog schließen nach erfolgreichem Löschen
       } else {
-        toast.error("Fehler beim Löschen des Todos");
+        toast.error(result.message);
       }
     } catch (error) {
       console.error("Fehler:", error);

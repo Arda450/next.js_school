@@ -14,31 +14,20 @@ export async function DELETE(
       );
     }
 
-    const response = await fetch(
-      `${process.env.BACKEND_URL}/api/todos/${params.id}`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${session.accessToken}`,
-          Accept: "application/json",
-        },
-      }
-    );
+    const { id } = params;
+    const response = await fetch(`${process.env.BACKEND_URL}/api/todos/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${session.accessToken}`,
+        Accept: "application/json",
+      },
+    });
 
-    // Wenn die Löschung erfolgreich ist
-    if (response.status === 204 || response.ok) {
-      return NextResponse.json({
-        status: "success",
-        message: "Todo erfolgreich gelöscht",
-      });
-    }
+    const data = await response.json();
 
     // Fehlerfall
-    const data = await response.json();
-    return NextResponse.json(
-      { status: "error", message: data.message || "Fehler beim Löschen" },
-      { status: response.status }
-    );
+
+    return NextResponse.json(data, { status: response.status });
   } catch (error) {
     console.error("Delete error:", error);
     return NextResponse.json(

@@ -83,7 +83,10 @@ export default function DeleteButton() {
             <span>
               All your data will be deleted and you will be logged out.
             </span>
-            <span>Please enter your email address to delete your profile.</span>
+            <span>
+              Please enter your email address to delete your profile, if you
+              want to proceed.
+            </span>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <Input

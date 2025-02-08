@@ -16,52 +16,56 @@ export default function LandingPage() {
   const [activeTab, setActiveTab] = useState<"login" | "register">("login");
 
   return (
-    <div className="w-full flex flex-col items-center justify-center min-h-screen">
-      <div className="w-full max-w-[400px] text-center ">
-        <div className="w-20 h-20 sm:w-32 sm:h-32 mx-auto my-8 rounded-full bg-primary/10 flex items-center justify-center">
-          <Image
-            src="/images/icon.svg"
-            alt="Todo Stream Logo"
-            width={128}
-            height={128}
-            priority
-            className="w-full h-full object-contain"
-          />
+    <main className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col justify-center items-center">
+        <div className="w-full text-center">
+          <div className="w-20 h-20 sm:w-32 sm:h-32 mx-auto my-8 rounded-full bg-primary/10 flex items-center justify-center">
+            <Image
+              src="/images/icon.svg"
+              alt="Todo Stream Logo"
+              width={128}
+              height={128}
+              priority
+              className="w-full h-full object-contain"
+            />
+          </div>
+
+          <h1 className="text-2xl sm:text-4xl font-bold mb-4 text-primary">
+            Todo Stream
+          </h1>
+
+          <p className=" text-lg sm:text-xl text-muted-foreground mb-4">
+            Your convenient Todo App
+          </p>
         </div>
 
-        <h1 className="text-2xl sm:text-4xl font-bold mb-4 text-primary">
-          Todo Stream
-        </h1>
+        <div className="w-full max-w-[500px] bg-card p-4 rounded-lg shadow-lg">
+          <h2 className="text-lg sm:text-2xl font-bold mb-4 flex justify-center">
+            {activeTab === "login" ? "Log In" : "Sign Up"}
+          </h2>
+          <Tabs
+            value={activeTab}
+            onValueChange={(value) =>
+              setActiveTab(value as "login" | "register")
+            }
+          >
+            <TabsList className="grid w-full grid-cols-2 mb-4">
+              <TabsTrigger value="login">Login</TabsTrigger>
+              <TabsTrigger value="register">Register</TabsTrigger>
+            </TabsList>
 
-        <p className=" text-lg sm:text-xl text-muted-foreground mb-4">
-          Your convenient Todo App
-        </p>
-      </div>
+            <TabsContent value="login">
+              <LoginForm />
+            </TabsContent>
 
-      <div className="w-full max-w-[500px] bg-card p-4 rounded-lg shadow-lg">
-        <h2 className="text-lg sm:text-2xl font-bold mb-4 flex justify-center">
-          {activeTab === "login" ? "Please log in" : "Create a free account"}
-        </h2>
-        <Tabs
-          value={activeTab}
-          onValueChange={(value) => setActiveTab(value as "login" | "register")}
-        >
-          <TabsList className="grid w-full grid-cols-2 mb-4">
-            <TabsTrigger value="login">Login</TabsTrigger>
-            <TabsTrigger value="register">Register</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="login">
-            <LoginForm />
-          </TabsContent>
-
-          <TabsContent value="register">
-            <RegisterForm onLoginClick={() => setActiveTab("login")} />
-          </TabsContent>
-        </Tabs>
+            <TabsContent value="register">
+              <RegisterForm onLoginClick={() => setActiveTab("login")} />
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
 
       <Footer />
-    </div>
+    </main>
   );
 }

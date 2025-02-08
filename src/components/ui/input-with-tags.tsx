@@ -47,7 +47,7 @@ export default function InputWithTags({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 w-full">
       <div>
         <div className="mt-1 flex flex-wrap gap-2 p-2 border rounded-lg min-h-[2.5rem]">
           {selectedTags.map((tag) => (
@@ -57,9 +57,10 @@ export default function InputWithTags({
             >
               {tag.text}
               <button
-                type="button"
                 onClick={() => handleRemoveTag(tag.id)}
                 className="hover:text-destructive"
+                type="button"
+                aria-label={`Remove tag ${tag.text}`}
               >
                 <X size={14} />
               </button>
@@ -80,6 +81,7 @@ export default function InputWithTags({
               type="button"
               onClick={() => handleTagSelect(tag)}
               className="px-3 py-1 text-sm border rounded-md hover:bg-accent transition-colors"
+              aria-label={`Add tag ${tag.text}`}
             >
               {tag.text}
             </button>

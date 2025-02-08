@@ -31,6 +31,7 @@ export default function PasswordForm() {
 
       const responseData = await response.json();
 
+      // holt die error message aus der response vom backend im updatePassword function
       if (!response.ok) throw new Error(responseData.error || "Update failed");
 
       // Session aktualisieren

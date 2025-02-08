@@ -24,7 +24,3 @@ export default async function Home() {
     </div>
   );
 }
-// bei api calls tags benutzen, zb "array" in "todo"
-// dort wo ich die todos anzeige, die gleichen tags mitgeben
-
-// revalidateTags benutzen von next.js zum neu fetchen

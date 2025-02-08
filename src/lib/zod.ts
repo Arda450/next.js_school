@@ -39,7 +39,7 @@ export const todoSchema = z.object({
   due_date: z.date().nullable().optional(),
   status: z.string(),
   tags: z.array(tagSchema).default([]),
-  shared_with: z.string().default(""),
+  shared_with: z.array(z.string()).default([]),
 });
 
 export type TodoFormValues = z.infer<typeof todoSchema>;
