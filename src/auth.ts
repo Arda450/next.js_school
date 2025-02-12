@@ -27,10 +27,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 "Content-Type": "application/json",
                 Accept: "application/json",
               },
-              body: JSON.stringify({
-                email: credentials.email,
-                password: credentials.password,
-              }),
+              body: JSON.stringify(credentials),
             }
           );
 
@@ -89,7 +86,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.username = user.username;
         token.email = user.email;
         token.accessToken = user.token;
-        token.profile_image = user.profile_image; // Füge das Profilbild hinzu
+        token.profile_image = user.profile_image; // Füge das Profilbild noch hinzu
       }
       return token;
     },

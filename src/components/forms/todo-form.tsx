@@ -112,13 +112,20 @@ export default function TodoForm({ onCancel, session }: TodoFormProps) {
 
         console.log(responseData);
         if (response.ok) {
+          // Reset form and selected users
+          onCancel();
+          form.reset();
+          setSelectedUsers([]);
+
+          // Refresh todos
+          refreshTodos();
+
+          // Show success message
           toast.success("To-Do created successfully!", {
             duration: 3000,
           });
-          form.reset(); // inputfelder zurücksetzen
-          setSelectedUsers([]); // Ausgewählte User zurücksetzen
-          await refreshTodos(); // Warte auf das erneute Laden der Todos
-          onCancel(); // formular wird erst nach dem neu laden der todos geschlossen
+
+          // Close form
         } else {
           switch (response.status) {
             case 400:
@@ -140,7 +147,7 @@ export default function TodoForm({ onCancel, session }: TodoFormProps) {
         setIsSubmitting(false); // Button wieder aktivieren
       }
     },
-    [refreshTodos]
+    [refreshTodos, onCancel]
   );
 
   // Funktion wird im Child definiert mit toggleFormVisibility als onCancel

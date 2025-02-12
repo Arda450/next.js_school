@@ -4,7 +4,6 @@
 import { useState } from "react";
 import TodoForm from "@/components/forms/todo-form";
 import { Button } from "@/components/ui/button";
-import { MinusIcon } from "lucide-react";
 import PlusIcon from "@/components/icons/plus-icon";
 import { Session } from "next-auth";
 

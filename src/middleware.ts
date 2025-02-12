@@ -19,19 +19,6 @@ wird er auf "/" weitergeleitet, und die vorherige Seite wird im Cookie (previous
     }
   }
 
-  // if (!isAuthenticated && req.nextUrl.pathname !== "/") {
-  //   const response = NextResponse.redirect(new URL("/", nextUrl.origin));
-  //   response.headers.append(
-  //     "Set-Cookie",
-  //     setCookie("previousPage", nextUrl.pathname)
-  //   );
-  //   return response;
-  // }
-
-  /**Wenn der Benutzer eingeloggt ist und die Root-Seite (/) aufruft, wird er auf:
-   * - Die Seite, die im previousPage-Cookie gespeichert ist (falls vorhanden), oder
-   * - /authenticated, falls keine vorherige Seite gespeichert wurde, weitergeleitet.
-   */
   if (isAuthenticated && req.nextUrl.pathname === "/") {
     const cookies = req.headers.get("cookie") || "";
     let previousPage =
