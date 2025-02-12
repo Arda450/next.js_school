@@ -8,8 +8,8 @@ import DeleteButton from "@/components/user/deleteUserDialog";
 
 export default function ProfileSettings() {
   return (
-    <div className="container max-w-2xl mx-auto py-8">
-      <div className="space-y-6">
+    <div className="w-full max-w-3xl mx-auto">
+      <div className="space-y-6 max-w-7xl">
         <div>
           <h3 className="text-lg font-medium">Profile Settings</h3>
           <p className="text-sm text-muted-foreground">
@@ -18,7 +18,7 @@ export default function ProfileSettings() {
         </div>
         <Separator />
 
-        <Tabs defaultValue="username" className="w-full">
+        <Tabs defaultValue="username" className="w-full ">
           <TabsList>
             <TabsTrigger value="username">Username</TabsTrigger>
             <TabsTrigger value="email">Email</TabsTrigger>

@@ -21,6 +21,7 @@ import { Todo, TodoListProps } from "@/types/todo";
 import KebabMenu from "@/components/ui/kebap-menu";
 import { cn } from "@/lib/utils";
 import { UsersRound } from "lucide-react";
+import DeleteButton from "../todos/deleteTodoDialog";
 
 export default function TodoList({ session }: Omit<TodoListProps, "todos">) {
   const {
@@ -48,13 +49,18 @@ export default function TodoList({ session }: Omit<TodoListProps, "todos">) {
     setDialogType("edit");
   };
 
+  const handleDelete = (todo: Todo) => {
+    setSelectedTodo(todo);
+    setDialogType("delete");
+  };
+
   // const displayTodos = searchQuery ? filteredTodos : [...todos, ...sharedTodos];
 
   return (
     <>
-      <div className="grid gap-2 md:gap-4 mx-auto min-h-[50vh]">
+      <div className="grid gap-2 md:gap-4 mx-auto p-1">
         {filteredTodos.length === 0 ? (
-          <div className="flex items-center justify-center h-[200px] text-center p-4 text-muted-foreground">
+          <div className="flex items-center justify-center h-32 text-center p-4 text-muted-foreground">
             {searchQuery || activeTag
               ? "Keine Todos gefunden"
               : "Keine Todos vorhanden"}
@@ -75,7 +81,7 @@ export default function TodoList({ session }: Omit<TodoListProps, "todos">) {
               <Card
                 key={todo.id}
                 className={cn(
-                  "relative flex flex-col min-h-[200px] overflow-hidden transition-all hover:shadow-md dark:border-border",
+                  "relative flex flex-col h-fit overflow-hidden transition-all hover:shadow-md dark:border-border",
                   {
                     "opacity-50": todo.status === "completed",
                   }
@@ -108,6 +114,7 @@ export default function TodoList({ session }: Omit<TodoListProps, "todos">) {
                 <KebabMenu
                   className="absolute top-2 right-2 text-gray-500 hover:text-gray-900"
                   onEdit={() => handleEdit(todo)}
+                  onDelete={() => handleDelete(todo)}
                   todo={todo}
                 />
                 <CardHeader>
@@ -209,6 +216,17 @@ export default function TodoList({ session }: Omit<TodoListProps, "todos">) {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Delete Dialog */}
+      {selectedTodo && (
+        <DeleteButton
+          todo={selectedTodo}
+          open={dialogType === "delete"}
+          onOpenChange={(open) => !open && handleDialogClose()}
+          onError={handleDialogClose}
+          onCancel={handleDialogClose}
+        />
+      )}
     </>
   );
 }

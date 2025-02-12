@@ -49,11 +49,11 @@ export default function InputWithTags({
   return (
     <div className="space-y-4 w-full">
       <div>
-        <div className="mt-1 flex flex-wrap gap-2 p-2 border rounded-lg min-h-[2.5rem]">
+        <div className="mt-1 flex flex-wrap gap-2 p-1 border rounded-lg min-h-[2.5rem]">
           {selectedTags.map((tag) => (
             <span
               key={tag.id}
-              className="inline-flex items-center gap-1 px-2 py-1 bg-primary/10 rounded-md text-sm"
+              className="inline-flex items-center gap-1 px-2 py-1 bg-primary/20 rounded-md text-sm"
             >
               {tag.text}
               <button

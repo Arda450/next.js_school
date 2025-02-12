@@ -66,7 +66,7 @@ export default function AvatarForm() {
   };
 
   return (
-    <Card className="p-4">
+    <Card className="p-8 w-full">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="flex flex-col items-center gap-4">
           <div className="text-center">

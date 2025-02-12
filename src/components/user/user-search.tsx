@@ -58,7 +58,13 @@ export function UserSearch({
         const data = await response.json();
 
         if (data.status === "success" && Array.isArray(data.users)) {
-          setUsers(data.users);
+          if (data.users.length === 0) {
+            setError(`No users found matching "${searchTerm}"`);
+            setUsers([]); // Entfernt vorherige suchergebnisse im dropdown.
+          } else {
+            setUsers(data.users);
+            setError(null);
+          }
         } else {
           setError("Invalid response format");
           setUsers([]);
@@ -73,8 +79,11 @@ export function UserSearch({
         setIsLoading(false);
       }
     };
-    const timeoutId = setTimeout(searchUsers, 1000);
-    return () => clearTimeout(timeoutId);
+
+    if (searchTerm.length >= 2) {
+      const timeoutId = setTimeout(searchUsers, 1000);
+      return () => clearTimeout(timeoutId);
+    }
   }, [searchTerm]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -103,7 +112,7 @@ export function UserSearch({
           {selectedUsers.map((username) => (
             <div
               key={username}
-              className="flex items-center gap-1 px-2 py-1 text-sm bg-primary/10 rounded-md"
+              className="flex items-center gap-1 px-2 py-1 text-sm bg-primary/20 rounded-md"
             >
               <span>{username}</span>
               <button

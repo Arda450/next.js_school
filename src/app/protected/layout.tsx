@@ -33,7 +33,7 @@ export default async function AuthenticatedLayout({
               <div className="flex-1 flex flex-col min-h-screen">
                 <Header />
                 <main className="flex-1 w-full">
-                  <div className="min-h-[calc(100vh-4rem)] max-w-7xl mx-auto px-2 md:px-8 py-8">
+                  <div className="min-h-[calc(100vh-4rem)] w-full px-2 md:px-8 py-8">
                     {children}
                   </div>
                 </main>

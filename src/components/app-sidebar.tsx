@@ -91,7 +91,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       // },
       {
         id: "categories",
-        title: "Search for Todos",
+        title: "Filter Todos",
         icon: Search,
         isHidden: !isHomePage, // Verstecke die Kategorien auf anderen Seiten
         items: [
@@ -109,7 +109,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             onClick: () => handleTagClick("Personal"),
             active: activeTag === "Personal",
             disabled: !isHomePage, // Deaktiviere die Items
-            className: !isHomePage ? "opacity-50 cursor-not-allowed" : "",
           },
           {
             id: "work",
@@ -117,7 +116,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             onClick: () => handleTagClick("Work"),
             active: activeTag === "Work",
             disabled: !isHomePage, // Deaktiviere die Items
-            className: !isHomePage ? "opacity-50 cursor-not-allowed" : "",
           },
           {
             id: "school",
@@ -125,7 +123,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             onClick: () => handleTagClick("School"),
             active: activeTag === "School",
             disabled: !isHomePage, // Deaktiviere die Items
-            className: !isHomePage ? "opacity-50 cursor-not-allowed" : "",
           },
           {
             id: "low_priority",
@@ -133,7 +130,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             onClick: () => handleTagClick("Low Priority"),
             active: activeTag === "Low Priority",
             disabled: !isHomePage, // Deaktiviere die Items
-            className: !isHomePage ? "opacity-50 cursor-not-allowed" : "",
           },
           {
             id: "urgent",
@@ -141,7 +137,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             onClick: () => handleTagClick("Urgent"),
             active: activeTag === "Urgent",
             disabled: !isHomePage, // Deaktiviere die Items
-            className: !isHomePage ? "opacity-50 cursor-not-allowed" : "",
           },
         ],
       },
@@ -223,16 +218,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           className="group hover:no-underline"
           aria-label="Go to home page"
         >
-          <div className="flex items-center space-x-4 rounded-lg p-2 transition-all duration-200 hover:bg-accent group-hover:bg-accent dark:hover:bg-accent/50">
+          <div className="flex items-center space-x-4 rounded-lg p-2 group-data-[collapsible=icon]:p-0.5 transition-all duration-200 hover:bg-accent group-hover:bg-accent dark:hover:bg-accent/50">
             {" "}
-            <div className="flex">
+            <div className="flex shrink-0">
               <Image
                 src={data.appInfo.icon}
                 alt={data.appInfo.name}
                 width={32}
                 height={32}
-                className="size-8"
+                className="size-8 "
                 priority
+                loading="eager"
               />
             </div>
             <div className="group-data-[collapsible=icon]:hidden">

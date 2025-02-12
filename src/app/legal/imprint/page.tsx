@@ -1,11 +1,11 @@
 export default function ImprintPage() {
   return (
     <article className="prose dark:prose-invert max-w-none">
-      <h1 className="text-3xl font-bold m-8">Imprint</h1>
+      <h1 className="text-3xl font-bold m-6">Imprint</h1>
 
       <section className="space-y-8 p-6">
         <div className="responsible">
-          <h2 className="text-xl font-semibold mb-4">Responsible</h2>
+          <h2 className="text-xl font-semibold mb-24">Responsible</h2>
           <div className="space-y-1">
             <p>Arda Karadavut, Todo Stream</p>
             <p>Beispielsstrasse 69</p>

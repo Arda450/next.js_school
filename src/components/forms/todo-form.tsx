@@ -16,12 +16,10 @@ import {
 } from "@/components/ui/form";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
-import { error } from "console";
-import { useCallback, useEffect, useState } from "react"; // Für diee Zustandsverwaltung
+import { useCallback, useEffect, useState } from "react"; // Für die zustandsverwaltung
 import { useTodos } from "../todos/todo-context";
 import { toast } from "sonner";
 import { Session } from "next-auth";
-import { de } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 
@@ -76,17 +74,12 @@ export default function TodoForm({ onCancel, session }: TodoFormProps) {
     },
   });
 
-  // User-Auswahl
-  // Ändere die handleUserSelect Funktion wie folgt:
-
-  // Ändere die handleUserSelect Funktion wie folgt:
+  // Memoize selectedUsers state updates
   const handleUserSelect = useCallback((username: string) => {
     setSelectedUsers((prev) => {
       const newUsers = prev.includes(username)
         ? prev.filter((u) => u !== username)
         : [...prev, username];
-
-      // Verschiebe setValue in einen useEffect
       return newUsers;
     });
   }, []);
@@ -96,6 +89,60 @@ export default function TodoForm({ onCancel, session }: TodoFormProps) {
     form.setValue("shared_with", selectedUsers);
   }, [selectedUsers, form]);
 
+  // Memoize form submission
+  const onSubmit = useCallback(
+    async (data: TodoFormValues) => {
+      setIsSubmitting(true);
+      try {
+        // Datum formattieren vor dem Senden ins dd-mm-yyyy foramt
+        const formattedData = {
+          ...data,
+          due_date: data.due_date ? format(data.due_date, "dd.MM.yyyy") : null,
+        };
+
+        const response = await fetch(`/api/todos`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formattedData),
+        });
+
+        const responseData = await response.json();
+
+        console.log(responseData);
+        if (response.ok) {
+          toast.success("To-Do created successfully!", {
+            duration: 3000,
+          });
+          form.reset(); // inputfelder zurücksetzen
+          setSelectedUsers([]); // Ausgewählte User zurücksetzen
+          await refreshTodos(); // Warte auf das erneute Laden der Todos
+          onCancel(); // formular wird erst nach dem neu laden der todos geschlossen
+        } else {
+          switch (response.status) {
+            case 400:
+              toast.error(responseData.message || "Ungültige Eingabedaten.");
+              break;
+            case 422:
+              toast.error(responseData.message || "Validierungsfehler.");
+              break;
+            default:
+              toast.error(
+                "Serverfehler. Bitte versuchen Sie es später erneut."
+              );
+          }
+        }
+      } catch (error) {
+        console.error("Fehler beim Erstellen des To-Dos:", error);
+        toast.error("Ein unerwarteter Fehler ist aufgetreten.");
+      } finally {
+        setIsSubmitting(false); // Button wieder aktivieren
+      }
+    },
+    [refreshTodos]
+  );
+
   // Funktion wird im Child definiert mit toggleFormVisibility als onCancel
   const handleCancel = () => {
     form.reset(); // inputfelder zurücksetzen
@@ -103,60 +150,11 @@ export default function TodoForm({ onCancel, session }: TodoFormProps) {
     onCancel(); // formular schliessen
   };
 
-  const onSubmit = async (data: TodoFormValues) => {
-    setIsSubmitting(true);
-
-    try {
-      // Datum formattieren vor dem Senden ins dd-mm-yyyy foramt
-      const formattedData = {
-        ...data,
-        due_date: data.due_date ? format(data.due_date, "dd.MM.yyyy") : null,
-      };
-
-      const response = await fetch(`/api/todos`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formattedData),
-      });
-
-      const responseData = await response.json();
-
-      console.log(responseData);
-      if (response.ok) {
-        toast.success("To-Do created successfully!", {
-          duration: 3000,
-        });
-        form.reset(); // inputfelder zurücksetzen
-        setSelectedUsers([]); // Ausgewählte User zurücksetzen
-        refreshTodos(); // Todos erneut laden
-        onCancel(); // formular schliessen
-      } else {
-        switch (response.status) {
-          case 400:
-            toast.error(responseData.message || "Ungültige Eingabedaten.");
-            break;
-          case 422:
-            toast.error(responseData.message || "Validierungsfehler.");
-            break;
-          default:
-            toast.error("Serverfehler. Bitte versuchen Sie es später erneut.");
-        }
-      }
-    } catch (error) {
-      console.error("Fehler beim Erstellen des To-Dos:", error);
-      toast.error("Ein unerwarteter Fehler ist aufgetreten.");
-    } finally {
-      setIsSubmitting(false); // Button wieder aktivieren
-    }
-  };
-
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-6 w-full max-w-4xl mx-auto"
+        className="space-y-6 w-full max-w-4xl mx-auto p-1"
       >
         <FormField
           control={form.control}

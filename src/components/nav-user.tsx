@@ -85,19 +85,19 @@ export function NavUser() {
             </DropdownMenuLabel> */}
             {/* <DropdownMenuSeparator /> */}
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              {/* <DropdownMenuItem>
                 <Link href="/protected/settings/profile" className="flex">
                   <BadgeCheck className="mr-2 h-4 w-4" />
                   Profile Settings
                 </Link>
               </DropdownMenuItem>
 
-              {/* <DropdownMenuItem>
+              <DropdownMenuItem>
                 <Bell />
                 Notifications
               </DropdownMenuItem> */}
             </DropdownMenuGroup>
-            <DropdownMenuSeparator />
+            {/* <DropdownMenuSeparator /> */}
             <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/" })}>
               <div className="flex items-center w-full">
                 <LogOut className="mr-2 h-4 w-4" />

@@ -29,6 +29,7 @@ export const logout = async () => {
 };
 
 export const login = async (
+  /* eslint-disable  @typescript-eslint/no-explicit-any */
   prevState: any,
   formData: FormData
 ): Promise<any> => {

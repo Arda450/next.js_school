@@ -1,5 +1,6 @@
 import NextAuth, { User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { NextRequest } from "next/server";
 
 // hier wird der Token aus dem backend nach erfolgreichem login gespeichert und in den api anfragen verwendet
 
@@ -10,7 +11,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         email: {},
         password: {},
       },
-      async authorize(credentials, request): Promise<User | null> {
+      async authorize(credentials): Promise<User | null> {
         try {
           if (!credentials?.email || !credentials?.password) {
             throw new Error("Email and password are required");
@@ -60,7 +61,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
-    authorized({ request, auth }: any) {
+    authorized({ request, auth }: { request: NextRequest; auth: any }) {
       return !!auth; // überprüft, ob der Benutzer authentifiziert ist
     },
 

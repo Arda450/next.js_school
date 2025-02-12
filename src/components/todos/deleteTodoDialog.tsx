@@ -26,13 +26,19 @@ import { Trash2 } from "lucide-react";
 type DeleteButtonProps = {
   todo: Todo;
   isLoading?: boolean;
-  trigger?: React.ReactNode; // Neuer Prop für custom Trigger
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  onError?: () => void;
+  onCancel?: () => void;
 };
 
 export default function DeleteButton({
   todo,
   isLoading,
-  trigger,
+  open,
+  onOpenChange,
+  onError,
+  onCancel,
 }: DeleteButtonProps) {
   const { deleteTodo } = useTodos();
 
@@ -41,32 +47,20 @@ export default function DeleteButton({
       const result = await deleteTodo(todo.id);
       if (result.success) {
         toast.success(result.message);
-        // Optional: Dialog schließen nach erfolgreichem Löschen
+        onOpenChange?.(false);
       } else {
         toast.error(result.message);
+        onError?.();
       }
     } catch (error) {
       console.error("Fehler:", error);
       toast.error("Ein unerwarteter Fehler ist aufgetreten");
+      onError?.();
     }
   };
 
   return (
-    <AlertDialog>
-      <Tooltip>
-        <AlertDialogTrigger asChild>
-          {trigger || (
-            <Button
-              variant="destructive"
-              disabled={isLoading}
-              className="transition-opacity duration-200 disabled:opacity-50"
-            >
-              <Trash2 className="h-4 w-4 mr-2" />
-              Löschen
-            </Button>
-          )}
-        </AlertDialogTrigger>
-      </Tooltip>
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Delete Todo?</AlertDialogTitle>
@@ -77,7 +71,7 @@ export default function DeleteButton({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel asChild>
-            <Button variant="outline">
+            <Button variant="outline" onClick={onCancel}>
               <Ban className="h-4 w-4 mr-2" />
               Cancel
             </Button>

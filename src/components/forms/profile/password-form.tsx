@@ -61,7 +61,7 @@ export default function PasswordForm() {
   };
 
   return (
-    <Card className="p-4">
+    <Card className="p-8 w-full">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
           <label htmlFor="current_password">Current Password</label>

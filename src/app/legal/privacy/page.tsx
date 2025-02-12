@@ -1,7 +1,7 @@
 export default function PrivacyPage() {
   return (
     <article className="prose dark:prose-invert max-w-none">
-      <h1 className="text-3xl font-bold m-8">Our Privacy Policy</h1>
+      <h1 className="text-3xl font-bold m-6">Our Privacy Policy</h1>
 
       <section className="space-y-8 p-6">
         <div>
@@ -10,8 +10,8 @@ export default function PrivacyPage() {
           </h4>
           <p className="text-muted-foreground">
             At Todo Stream, we prioritize the privacy and protection of our
-            users' personal information. This Privacy Policy outlines how we
-            collect, use, store, and disclose information when you visit our
+            users&apos; personal information. This Privacy Policy outlines how
+            we collect, use, store, and disclose information when you visit our
             website or use our services. By accessing or using our website, you
             agree to the terms outlined in this policy.
           </p>
@@ -27,8 +27,8 @@ export default function PrivacyPage() {
           <p className="text-muted-foreground">
             We may collect personal information from you when you voluntarily
             provide it while using our website or services. This may include
-            your name, email address, contact information, and any other
-            information you choose to provide.
+            your name, email address and any other information you choose to
+            provide.
           </p>
         </div>
 
@@ -36,10 +36,9 @@ export default function PrivacyPage() {
           <h4 className="text-lg font-semibold mb-2">1.2 Log Data:</h4>
           <p className="text-muted-foreground">
             Our servers automatically collect certain information when you
-            access our website, including your IP address, browser type,
-            referring/exit pages, and timestamps. We use this information to
-            analyze trends, administer the site, and gather demographic
-            information.
+            access our website, including your IP address and referring/exit
+            pages. We use this information to analyze trends, administer the
+            site, and gather demographic information.
           </p>
         </div>
 
@@ -136,13 +135,16 @@ export default function PrivacyPage() {
           </h4>
           <p>
             You have the right to access, update, correct, or delete your
-            personal information. You can exercise these rights by contacting us
-            using the contact information provided below. We will make
-            reasonable efforts to respond to your requests in a timely manner.
+            personal information. You can exercise these rights by deleting your
+            account or contacting us using the contact information provided
+            below. We will make reasonable efforts to respond to your requests
+            in a timely manner.
           </p>
         </div>
         <div>
-          <h4 className="text-xl font-semibold mb-2">6. Children's Privacy</h4>
+          <h4 className="text-xl font-semibold mb-2">
+            6. Children&apos;s Privacy
+          </h4>
           <p>
             Our website is not directed to individuals under the age of 13. We
             do not knowingly collect personal information from children. If you

@@ -8,17 +8,21 @@ import { MoreVertical } from "lucide-react";
 import { cn } from "@/lib/utils";
 import DeleteButton from "@/components/todos/deleteTodoDialog";
 import { Todo } from "@/types/todo";
+import { useState } from "react";
 
 interface KebabMenuProps {
   className?: string;
   onEdit: () => void;
-  todo: Todo; // Neuer Prop
+  onDelete: () => void;
+  todo: Todo;
 }
 
-function KebabMenu({ className, onEdit, todo }: KebabMenuProps) {
+function KebabMenu({ className, onEdit, onDelete, todo }: KebabMenuProps) {
+  const [open, setOpen] = useState(false);
+
   return (
     <div className={cn(className)}>
-      <DropdownMenu>
+      <DropdownMenu open={open} onOpenChange={setOpen}>
         <DropdownMenuTrigger asChild>
           <div className="cursor-pointer">
             <MoreVertical />
@@ -26,14 +30,14 @@ function KebabMenu({ className, onEdit, todo }: KebabMenuProps) {
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuItem onClick={onEdit}>Edit Todo</DropdownMenuItem>
-          <DeleteButton
-            todo={todo}
-            trigger={
-              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                Delete Todo
-              </DropdownMenuItem>
-            }
-          />
+          <DropdownMenuItem
+            onClick={() => {
+              onDelete();
+              setOpen(false);
+            }}
+          >
+            Delete Todo
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
