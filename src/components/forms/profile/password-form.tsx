@@ -4,8 +4,8 @@ import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import SubmitButton from "@/components/buttons/submit-button";
 
 export default function PasswordForm() {
   const { update, data: session } = useSession();
@@ -102,9 +102,11 @@ export default function PasswordForm() {
           />
         </div>
 
-        <Button type="submit" disabled={isLoading}>
-          {isLoading ? "Updating..." : "Update Password"}
-        </Button>
+        <SubmitButton
+          text="Update Password"
+          loadingText="Updating..."
+          disabled={isLoading}
+        />
       </form>
     </Card>
   );

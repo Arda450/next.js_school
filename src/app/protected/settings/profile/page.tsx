@@ -4,7 +4,7 @@ import UsernameForm from "@/components/forms/profile/username-form";
 import EmailForm from "@/components/forms/profile/email-form";
 import PasswordForm from "@/components/forms/profile/password-form";
 import AvatarForm from "@/components/forms/profile/avatar-form";
-import DeleteButton from "@/components/user/deleteUserDialog";
+import DeleteButton from "@/components/user/delete-user-dialog";
 
 export default function ProfileSettings() {
   return (

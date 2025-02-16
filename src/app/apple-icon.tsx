@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import Image from "next/image";
 
 export const runtime = "edge";
 export const size = {
@@ -19,16 +20,16 @@ export default function Icon() {
           justifyContent: "center",
         }}
       >
-        {/* Verwende dein SVG direkt aus dem public Ordner */}
-        <img
-          src={new URL(
-            "/images/icon.svg",
-            process.env.NEXT_PUBLIC_URL
-          ).toString()}
+        <Image
+          src="/images/icon.svg"
           alt="Todo Stream Logo"
+          width={size.width * 0.9}
+          height={size.height * 0.9}
+          priority
           style={{
             width: "90%",
             height: "90%",
+            objectFit: "contain",
           }}
         />
       </div>

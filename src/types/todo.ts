@@ -15,11 +15,12 @@ export interface Todo {
   tags?: Tag[];
   shared_with?: string[]; // ein todo kann mit mehreren usern geteilt werden, deshalb ein array
   shared_by?: string; // ein todo wird nur von einem user geteilt, deshalb kein array, sondern ein string
-  is_due_soon?: boolean;
-  is_overdue?: boolean;
+  is_due_soon?: boolean; // richtig oder falsch
+  is_overdue?: boolean; // richtig oder falsch
 }
-
+// Todo interface wird als props übergeben
 export interface TodoListProps {
   todos: Todo[];
+  /* eslint-disable  @typescript-eslint/no-explicit-any */
   session: any;
 }

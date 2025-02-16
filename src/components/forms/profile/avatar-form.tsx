@@ -1,15 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-// import { useUser } from "../../user/UserContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { AVATAR_STYLES, AvatarStyle, generateAvatarUrl } from "@/lib/avatar";
 import { useUser } from "@/components/user/user-context";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import SubmitButton from "@/components/buttons/submit-button";
 
 export default function AvatarForm() {
   const { data: session, update } = useSession();
@@ -50,7 +49,7 @@ export default function AvatarForm() {
       });
       refreshAvatar(); // Aktualisiere den Avatar im Context
       toast.success("Avatar updated successfully");
-    } catch (error) {
+    } catch {
       toast.error("Failed to update avatar");
     } finally {
       setIsLoading(false);
@@ -122,17 +121,15 @@ export default function AvatarForm() {
           </div>
         </div>
 
-        <Button
-          type="submit"
+        <SubmitButton
+          text="Update Avatar"
           disabled={
             isLoading ||
             !previewAvatar ||
             previewAvatar === session?.user?.profile_image
           }
           className="w-full"
-        >
-          {isLoading ? "Updating..." : "Update Avatar"}
-        </Button>
+        />
       </form>
     </Card>
   );

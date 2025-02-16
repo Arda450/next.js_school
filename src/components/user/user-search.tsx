@@ -1,15 +1,10 @@
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Label } from "@/components/ui/label";
 import { X } from "lucide-react";
 
 interface SearchResult {
   id: string;
-  username: string;
-}
-
-interface SelectedUser {
   username: string;
 }
 

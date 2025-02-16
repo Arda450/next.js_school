@@ -6,18 +6,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { MoreVertical } from "lucide-react";
 import { cn } from "@/lib/utils";
-import DeleteButton from "@/components/todos/deleteTodoDialog";
-import { Todo } from "@/types/todo";
 import { useState } from "react";
 
 interface KebabMenuProps {
   className?: string;
   onEdit: () => void;
   onDelete: () => void;
-  todo: Todo;
 }
 
-function KebabMenu({ className, onEdit, onDelete, todo }: KebabMenuProps) {
+function KebabMenu({ className, onEdit, onDelete }: KebabMenuProps) {
   const [open, setOpen] = useState(false);
 
   return (

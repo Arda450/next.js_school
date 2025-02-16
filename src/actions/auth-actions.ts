@@ -11,9 +11,6 @@ import { revalidatePath } from "next/cache";
 
 export const logout = async () => {
   try {
-    /** Dadurch wird vermieden, dass next-auth versucht, einen Redirect automatisch durchzuführen.
-     * Du kannst anschließend den Redirect manuell steuern.
-     */
     await signOut({ redirect: false });
     return {
       status: "success",
@@ -78,15 +75,10 @@ export const login = async (
 // ###################################################################
 
 export const register = async (prevState: any, formData: FormData) => {
-  // Prüfe, ob es sich um einen wiederholten Aufruf handelt
+  /* eslint-disable  @typescript-eslint/no-explicit-any */
   if (prevState?.status === "success") {
     return prevState;
   }
-
-  // if (!formData) {
-  //   return { status: "error", error: "No data provided" };
-  // }
-  // fetch the backend here
   console.log(process.env.BACKEND_URL);
   console.log("register triggered");
   console.log("formData");

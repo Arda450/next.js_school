@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 
 export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  context: { params: { id: string } }
 ) {
   try {
     const session = await auth();
@@ -14,7 +14,10 @@ export async function DELETE(
       );
     }
 
-    const { id } = params;
+    // Warte auf die params
+    // mit await bekomme ich den fehler im terminal nicht angezeigt
+    const { id } = await context.params;
+
     const response = await fetch(`${process.env.BACKEND_URL}/api/todos/${id}`, {
       method: "DELETE",
       headers: {
@@ -24,9 +27,6 @@ export async function DELETE(
     });
 
     const data = await response.json();
-
-    // Fehlerfall
-
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
     console.error("Delete error:", error);

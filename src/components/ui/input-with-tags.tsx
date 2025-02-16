@@ -1,7 +1,6 @@
 "use client";
 
 import { Tag } from "@/types/todo"; // Importieren Sie Tag von Ihrer todo.ts
-import { Label } from "@/components/ui/label";
 import { X } from "lucide-react"; // Für das X-Icon
 import { useState, useEffect } from "react";
 
@@ -14,7 +13,6 @@ interface InputWithTagsProps {
 export default function InputWithTags({
   selectedTags,
   onTagsChange,
-  label = "Tags",
 }: InputWithTagsProps) {
   const [availableTags, setAvailableTags] = useState<Tag[]>([]);
 
@@ -66,6 +64,11 @@ export default function InputWithTags({
               </button>
             </span>
           ))}
+          {selectedTags.length === 0 && (
+            <span className="text-muted-foreground text-sm p-1">
+              Select tags from below
+            </span>
+          )}
         </div>
       </div>
 

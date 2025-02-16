@@ -5,8 +5,6 @@ import LoginForm from "@/components/forms/login-form";
 import RegisterForm from "@/components/forms/register-form";
 import { Tabs, TabsTrigger, TabsContent, TabsList } from "@/components/ui/tabs";
 import { useSession } from "next-auth/react";
-
-// Erlaubt das Hinzufügen und Verwalten eines lokalen Zustands in funktionalen Komponenten.
 import { useState } from "react";
 import Image from "next/image";
 

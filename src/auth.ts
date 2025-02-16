@@ -58,12 +58,23 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
-    authorized({ request, auth }: { request: NextRequest; auth: any }) {
+    authorized({
+      auth,
+    }: {
+      request: NextRequest;
+      /* eslint-disable  @typescript-eslint/no-explicit-any */
+      auth: any;
+    }) {
       return !!auth; // überprüft, ob der Benutzer authentifiziert ist
     },
 
     // auth.ts
-    async jwt({ token, user, trigger }: any) {
+    async jwt({
+      token,
+      user,
+      trigger,
+    }: /* eslint-disable  @typescript-eslint/no-explicit-any */
+    any) {
       if (trigger === "update") {
         // Hole die aktuellen Benutzerdaten beim Update
         const response = await fetch(
@@ -90,7 +101,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       return token;
     },
-    async session({ session, token }: any) {
+    async session({
+      session,
+      token,
+    }: /* eslint-disable  @typescript-eslint/no-explicit-any */
+    any) {
       //console.log("session log: ", token);
 
       // Setze die gewünschten Daten in die Session

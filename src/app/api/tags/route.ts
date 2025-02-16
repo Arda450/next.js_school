@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 
-// Hole alle verfügbaren Tags
+// hole alle verfügbaren tags vom backend
 export async function GET() {
   try {
     const session = await auth();

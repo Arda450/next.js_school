@@ -19,9 +19,10 @@ import { Button } from "../ui/button";
 import { useCallback, useEffect, useState } from "react"; // Für die zustandsverwaltung
 import { useTodos } from "../todos/todo-context";
 import { toast } from "sonner";
-import { Session } from "next-auth";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
+import SubmitButton from "@/components/buttons/submit-button";
+import CancelButton from "@/components/buttons/cancel-button";
 
 import { CalendarIcon, ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -33,9 +34,7 @@ import {
   CalendarGridBody,
   CalendarGridHeader,
   CalendarHeaderCell,
-  DateInput,
   DatePicker,
-  DateSegment,
   Dialog,
   Group,
   Heading,
@@ -50,11 +49,10 @@ type TodoFormValues = z.infer<typeof todoSchema>;
 interface TodoFormProps {
   // Funktion toggleFormVisibility wird im onCancel als Prop empfangen
   onCancel: () => void;
-  session: Session;
 }
 
 // onCancel wird hier als Prop übergeben
-export default function TodoForm({ onCancel, session }: TodoFormProps) {
+export default function TodoForm({ onCancel }: TodoFormProps) {
   // Lokaler Zustand für Erfolg- oder Fehlermeldungen
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -147,7 +145,7 @@ export default function TodoForm({ onCancel, session }: TodoFormProps) {
         setIsSubmitting(false); // Button wieder aktivieren
       }
     },
-    [refreshTodos, onCancel]
+    [refreshTodos, onCancel, form]
   );
 
   // Funktion wird im Child definiert mit toggleFormVisibility als onCancel
@@ -313,7 +311,7 @@ export default function TodoForm({ onCancel, session }: TodoFormProps) {
           <FormField
             control={form.control}
             name="shared_with"
-            render={({ field }) => (
+            render={() => (
               <FormItem>
                 <FormLabel className="text-base font-semibold">
                   Share with Users
@@ -331,26 +329,22 @@ export default function TodoForm({ onCancel, session }: TodoFormProps) {
           />
         </div>
 
+        <div>
+          <span className="md:text-sm text-xs text-muted-foreground">
+            *The status will be set to &quot;Open&quot; when creating a todo and
+            can be edited after creation.*
+          </span>
+        </div>
+
         <div className="flex justify-end gap-4 pt-4">
           {/* Funktion toggleFormVisibility wird hier aufgerufen */}
-          <Button
-            variant="outline"
-            onClick={handleCancel}
-            type="button"
+          <CancelButton onClick={handleCancel} className="min-w-[100px]" />
+          <SubmitButton
+            text="Create"
+            loadingText="Creating..."
+            disabled={isSubmitting}
             className="min-w-[100px]"
-            aria-label="Cancel creating todo"
-          >
-            Cancel
-          </Button>
-          {/* submit button */}
-          <Button
-            type="submit"
-            disabled={isSubmitting} // standartmäßig disabled
-            className="min-w-[100px]"
-            aria-label={isSubmitting ? "Creating todo..." : "Create todo"}
-          >
-            {isSubmitting ? "Creating..." : "Create"}
-          </Button>
+          />
         </div>
       </form>
     </Form>

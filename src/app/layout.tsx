@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   },
 };
 
-// Hauptlayout für die App
+// das ist das Hauptlayout für die App
 
 export default function RootLayout({
   children,

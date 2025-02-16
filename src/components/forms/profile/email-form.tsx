@@ -4,12 +4,11 @@ import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import SubmitButton from "@/components/buttons/submit-button";
 
 export default function EmailForm() {
   const { data: session, update } = useSession();
-  // const { user, setUser, refreshUser } = useUser();
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState(session?.user?.email || "");
 
@@ -57,9 +56,11 @@ export default function EmailForm() {
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
-        <Button type="submit" disabled={isLoading}>
-          {isLoading ? "Updating..." : "Update Email"}
-        </Button>
+        <SubmitButton
+          text="Update Email"
+          loadingText="Updating..."
+          disabled={isLoading}
+        />
       </form>
     </Card>
   );

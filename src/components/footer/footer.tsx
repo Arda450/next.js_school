@@ -42,6 +42,7 @@ function PublicFooter() {
   );
 }
 
+// es wurden 2 footer komponenten erstellt, da der footer in der protected und public route unterschiedlich ist
 function ProtectedFooter() {
   const { state } = useSidebar();
 

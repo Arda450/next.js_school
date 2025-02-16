@@ -39,7 +39,10 @@ export function NavMain({
 }) {
   const { setOpen } = useSidebar();
 
-  const handleItemClick = (item: any) => {
+  const handleItemClick = (
+    /* eslint-disable  @typescript-eslint/no-explicit-any */
+    item: any
+  ) => {
     if (item.id === "categories" || item.id === "settings") {
       setOpen(true);
     }

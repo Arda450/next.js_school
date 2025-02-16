@@ -1,18 +1,13 @@
 // dies ist der Todo Form Wrapper
 
-"use client"; // Dies ist eine Client-Komponente
+"use client";
 import { useState } from "react";
 import TodoForm from "@/components/forms/todo-form";
 import { Button } from "@/components/ui/button";
 import PlusIcon from "@/components/icons/plus-icon";
-import { Session } from "next-auth";
 
-interface AddTodoFormProps {
-  session: Session;
-}
-
-export default function AddTodoForm({ session }: AddTodoFormProps) {
-  // State wird im parent definiert
+export default function AddTodoForm() {
+  // state wird im parent definiert
   const [isFormVisible, setIsFormVisible] = useState(false);
 
   // funktion wird im parent definiert und wird als prop an die kindkomponente übergeben
@@ -47,7 +42,7 @@ export default function AddTodoForm({ session }: AddTodoFormProps) {
           }`}
         >
           {/* Funktion wird als Prop an die Kindkomponente (TodoForm) übergeben */}
-          <TodoForm onCancel={toggleFormVisibility} session={session} />
+          <TodoForm onCancel={toggleFormVisibility} />
         </div>
       </div>
     </div>

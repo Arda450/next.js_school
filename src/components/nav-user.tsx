@@ -1,14 +1,12 @@
 "use client";
 
-import { BadgeCheck, Bell, LogOut } from "lucide-react";
+import { LogOut } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -18,7 +16,6 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { CaretSortIcon } from "@radix-ui/react-icons";
-import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 import { useUser } from "./user/user-context";
 
@@ -69,35 +66,6 @@ export function NavUser() {
             align="end"
             sideOffset={4}
           >
-            {/* <DropdownMenuLabel className="p-0 font-normal">
-              <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.username} />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
-                </Avatar>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">
-                    {user.username}
-                  </span>
-                  <span className="truncate text-xs">{user.email}</span>
-                </div>
-              </div>
-            </DropdownMenuLabel> */}
-            {/* <DropdownMenuSeparator /> */}
-            <DropdownMenuGroup>
-              {/* <DropdownMenuItem>
-                <Link href="/protected/settings/profile" className="flex">
-                  <BadgeCheck className="mr-2 h-4 w-4" />
-                  Profile Settings
-                </Link>
-              </DropdownMenuItem>
-
-              <DropdownMenuItem>
-                <Bell />
-                Notifications
-              </DropdownMenuItem> */}
-            </DropdownMenuGroup>
-            {/* <DropdownMenuSeparator /> */}
             <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/" })}>
               <div className="flex items-center w-full">
                 <LogOut className="mr-2 h-4 w-4" />

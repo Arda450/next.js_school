@@ -17,8 +17,9 @@ export default function SearchBar() {
       {/* Aktiver Tag Badge */}
       {activeTag && (
         <div className="flex items-center">
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
-            {`Active Filter: ${activeTag}`}
+          <span className="inline-flex items-center px-2 py-0.3 rounded-full text-xs font-medium bg-primary/10 text-primary">
+            <span className="sm:hidden">{activeTag}</span>
+            <span className="hidden sm:inline">{`Active Filter: ${activeTag}`}</span>
           </span>
         </div>
       )}

@@ -4,8 +4,9 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { todoSchema } from "@/lib/zod";
-import { z } from "zod";
 import { Button } from "@/components/ui/button";
+import SubmitButton from "@/components/buttons/submit-button";
+import CancelButton from "@/components/buttons/cancel-button";
 import {
   Form,
   FormControl,
@@ -32,9 +33,7 @@ import {
   CalendarGridBody,
   CalendarGridHeader,
   CalendarHeaderCell,
-  DateInput,
   DatePicker,
-  DateSegment,
   Dialog,
   Group,
   Heading,
@@ -43,12 +42,11 @@ import {
 import { parseDate } from "@internationalized/date";
 
 type EditTodoFormProps = {
-  todo: Todo; // wird vom importierten TodoContext übergeben (todos im useTodos)
+  todo: Todo;
+  /* eslint-disable  @typescript-eslint/no-explicit-any */
   session: any;
   onClose: () => void;
 };
-
-// Stellt das Formular zum bearbeiten und löschhen von todos bereit
 
 export default function EditTodoForm({ todo, onClose }: EditTodoFormProps) {
   // Der Initialwert für isSubmitting wird auf false gesetzt
@@ -57,8 +55,6 @@ export default function EditTodoForm({ todo, onClose }: EditTodoFormProps) {
   // Zugriff auf die updateTodo-Funktion und das deleteTodo aus dem Kontext
   const { refreshTodos } = useTodos(); // aktualisiere die todo liste nach dem submit
 
-  // console.log("Todo received:", todo); // Debugging
-  // console.log("Due date:", todo.due_date); // Debugging
   const parseDateString = (dateStr: string | null) => {
     if (!dateStr) return null;
     try {
@@ -70,7 +66,7 @@ export default function EditTodoForm({ todo, onClose }: EditTodoFormProps) {
     }
   };
 
-  // Die Formularfelder werden mit react-hook-form und Zod-Validierung vorkonfiguriert
+  // Die Formularfelder werden mit react-hook-form und Zod vorkonfiguriert
   // initialisierung der Form
   const form = useForm({
     resolver: zodResolver(todoSchema),
@@ -80,12 +76,14 @@ export default function EditTodoForm({ todo, onClose }: EditTodoFormProps) {
       status: todo.status || "open",
       due_date: todo.due_date ? parseDateString(todo.due_date) : undefined,
       tags: todo.tags || [],
-      // shared_with: todo.shared_with || [],
     },
   });
 
   // Beim Absenden des Formulars wird eine PATCH request an die api gesendet
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (
+    /* eslint-disable  @typescript-eslint/no-explicit-any */
+    data: any
+  ) => {
     setIsSubmitting(true); // Der Zustand ändert sich auf true.
     setError(null); // Die Fehlermeldung wird auf null gesetzt.
 
@@ -108,7 +106,6 @@ export default function EditTodoForm({ todo, onClose }: EditTodoFormProps) {
       });
 
       const result = await handleUpdate.json();
-      console.log("Response:", result); // Debug-Log
 
       if (!handleUpdate.ok) {
         throw new Error(
@@ -267,38 +264,13 @@ export default function EditTodoForm({ todo, onClose }: EditTodoFormProps) {
             )}
           />
 
-          {/* <FormField
-            control={form.control}
-            name="shared_with"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Share with Users</FormLabel>
-                <FormControl>
-                  <Input
-                    type="text"
-                    placeholder="Enter usernames (comma separated)"
-                    value={field.value.join(", ")}
-                    onChange={(e) => {
-                      const users = e.target.value
-                        .split(",")
-                        .map((u) => u.trim())
-                        .filter((u) => u.length > 0);
-                      field.onChange(users);
-                    }}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          /> */}
-
           <div className="flex justify-end items-center space-x-2">
-            <Button variant="outline" onClick={onClose} type="button">
-              Cancel
-            </Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Saving..." : "Save"}
-            </Button>
+            <CancelButton onClick={onClose} />
+            <SubmitButton
+              text="Save"
+              loadingText="Saving..."
+              disabled={isSubmitting}
+            />
           </div>
         </form>
       </Form>

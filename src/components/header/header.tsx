@@ -1,17 +1,9 @@
 "use client";
 
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import SearchBar from "@/components/ui/search-bar";
 import { useSession } from "next-auth/react";
-import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 
 export default function Header() {
@@ -27,21 +19,12 @@ export default function Header() {
         <SidebarTrigger className="ml-4" />
         <div className="md:flex items-center gap-2 px-4">
           <Separator orientation="vertical" className="mr-2 h-8" />
-          {/* <Breadcrumb>
-            <BreadcrumbList> */}
-          {/* <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink> */}
-          <span className="hidden md:inline">
+          <span className="hidden lg:inline">
             Welcome, {session?.user?.username || "Guest"}
           </span>
-          {/* </BreadcrumbLink>
-              </BreadcrumbItem> */}
-          {/* <BreadcrumbSeparator className="hidden md:block" /> */}
-          {/* </BreadcrumbList>
-          </Breadcrumb> */}
         </div>
         {isHomePage && ( // Zeige die searchbar nur auf der homepage
-          <div className="flex-1 flex justify-center">
+          <div className="flex-1 flex justify-center mr-2">
             <SearchBar />
           </div>
         )}

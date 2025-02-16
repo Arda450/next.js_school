@@ -1,12 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { signIn, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { useRouter } from "next/navigation";
+import SubmitButton from "@/components/buttons/submit-button";
 
 export default function UsernameForm() {
   const { data: session, update } = useSession();
@@ -67,9 +66,11 @@ export default function UsernameForm() {
             onChange={(e) => setUsername(e.target.value)}
           />
         </div>
-        <Button type="submit" disabled={isLoading}>
-          {isLoading ? "Updating..." : "Update Username"}
-        </Button>
+        <SubmitButton
+          text="Update Username"
+          loadingText="Updating..."
+          disabled={isLoading}
+        />
       </form>
     </Card>
   );

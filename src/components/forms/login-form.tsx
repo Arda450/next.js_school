@@ -4,10 +4,9 @@ import { Input } from "../ui/input";
 import { useEffect } from "react";
 import { login } from "@/actions/auth-actions";
 import { useActionState } from "react";
-import { useFormStatus } from "react-dom";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import SubmitButton from "@/components/buttons/submit-button";
 
 export default function LoginForm() {
   // useActionState gibt ein Array zurück, das den state und eine Funktion (loginAction) enthält, um die Aktion auszuführen
@@ -32,14 +31,10 @@ export default function LoginForm() {
   }, [state]);
 
   const hasFieldErrors = state?.errors && Object.keys(state.errors).length > 0;
-  const showErrorBorder = (fieldName: string) =>
-    hasFieldErrors && state?.errors?.[fieldName]
-      ? "outline outline-red-500 outline-1"
-      : "";
 
   return (
     <form className="flex flex-col gap-2" action={loginAction}>
-      {/* Zeige "Wrong credentials" nur wenn es Validierungsfehler gibt */}
+      {/* zeige "wrong credentials" nur wenn es validierungsfehler gibt */}
       {hasFieldErrors && (
         <div className="text-red-500 text-sm mb-2">Wrong credentials</div>
       )}
@@ -69,16 +64,7 @@ export default function LoginForm() {
         />
       </div>
       {/*This is the function down below in the code*/}
-      <SubmitButton />
+      <SubmitButton text="Login" />
     </form>
-  );
-}
-function SubmitButton() {
-  const { pending } = useFormStatus();
-
-  return (
-    <Button disabled={pending} type="submit">
-      Login
-    </Button>
   );
 }

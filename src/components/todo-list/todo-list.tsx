@@ -21,17 +21,11 @@ import { Todo, TodoListProps } from "@/types/todo";
 import KebabMenu from "@/components/ui/kebap-menu";
 import { cn } from "@/lib/utils";
 import { UsersRound } from "lucide-react";
-import DeleteButton from "../todos/deleteTodoDialog";
+import DeleteButton from "../todos/delete-todo-dialog";
 
 export default function TodoList({ session }: Omit<TodoListProps, "todos">) {
-  const {
-    todos,
-    sharedTodos,
-    filteredTodos,
-    searchQuery,
-    refreshTodos,
-    activeTag,
-  } = useTodos();
+  const { sharedTodos, filteredTodos, searchQuery, refreshTodos, activeTag } =
+    useTodos();
   const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
   const [dialogType, setDialogType] = useState<"edit" | "delete" | null>(null);
 
@@ -115,7 +109,6 @@ export default function TodoList({ session }: Omit<TodoListProps, "todos">) {
                   className="absolute top-2 right-2 text-gray-500 hover:text-gray-900"
                   onEdit={() => handleEdit(todo)}
                   onDelete={() => handleDelete(todo)}
-                  todo={todo}
                 />
                 <CardHeader>
                   <CardTitle className="text-lg font-semibold flex items-center my-3 whitespace-pre-wrap">

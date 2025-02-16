@@ -2,7 +2,6 @@
 
 import {
   AlertDialog,
-  AlertDialogTrigger,
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
@@ -14,14 +13,8 @@ import {
 import { toast } from "sonner";
 import { Todo } from "@/types/todo";
 import { useTodos } from "@/components/todos/todo-context";
-import { Ban } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@radix-ui/react-tooltip";
-import { Button } from "../ui/button";
-import { Trash2 } from "lucide-react";
+import CancelButton from "@/components/buttons/cancel-button";
+import SubmitButton from "@/components/buttons/submit-button";
 
 type DeleteButtonProps = {
   todo: Todo;
@@ -34,7 +27,6 @@ type DeleteButtonProps = {
 
 export default function DeleteButton({
   todo,
-  isLoading,
   open,
   onOpenChange,
   onError,
@@ -71,20 +63,21 @@ export default function DeleteButton({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel asChild>
-            <Button variant="outline" onClick={onCancel}>
-              <Ban className="h-4 w-4 mr-2" />
-              Cancel
-            </Button>
+            <CancelButton
+              onClick={() => {
+                onCancel?.();
+              }}
+              showIcon={true}
+              className="w-full"
+            />
           </AlertDialogCancel>
           <AlertDialogAction asChild className="px-0">
-            <Button
-              onClick={handleDelete}
+            <SubmitButton
+              text="Confirm"
+              loadingText="Deleting..."
               variant="destructive"
               className="w-full"
-            >
-              <Trash2 className="h-4 w-4 mr-2" />
-              Confirm
-            </Button>
+            />
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

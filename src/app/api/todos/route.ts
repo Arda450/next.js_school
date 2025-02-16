@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 
-// Fetch all todos
+// Fetch all todos from backend
 export async function GET() {
   try {
     const session = await auth();
@@ -34,7 +34,7 @@ export async function GET() {
   }
 }
 
-// Create a new todo
+// create a new todo
 export async function POST(request: NextRequest) {
   const session = await auth();
 
@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
         Authorization: `Bearer ${session.accessToken}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(body), // Sende den kompletten Body
+      body: JSON.stringify(body),
     });
 
     const data = await response.json();
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Update a todo
+// update a todo
 export async function PATCH(request: NextRequest) {
   const session = await auth();
   if (!session?.accessToken) {
@@ -95,7 +95,7 @@ export async function PATCH(request: NextRequest) {
         Authorization: `Bearer ${session.accessToken}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(body), // sende den kompletten Body
+      body: JSON.stringify(body),
     });
 
     const data = await response.json();

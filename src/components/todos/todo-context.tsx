@@ -96,7 +96,6 @@ export function TodoProvider({ children }: { children: ReactNode }) {
     const dueDate = startOfDay(
       new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
     );
-    const today = startOfDay(new Date());
 
     // Überprüfe den Status
     const isOverdue = isPast(dueDate) && !isToday(dueDate); // Datum ist in der Vergangenheit und nicht heute
