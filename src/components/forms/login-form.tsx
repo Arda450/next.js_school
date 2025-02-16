@@ -19,10 +19,13 @@ export default function LoginForm() {
   });
 
   // useEffect überwacht den state und führt die entsprechenden Aktionen aus
+  // mit push.router wird die user nav in der sidebar erst nach refresh angezeigt, deswegen wird das login verzögert und window.location benutzt
   useEffect(() => {
     if (state?.status === "success") {
       toast.success("You are logged in!");
-      window.location.href = "/protected";
+      setTimeout(() => {
+        window.location.href = "/protected";
+      }, 1500);
     }
     // Für Toast bei Login-Fehlern
     if (state?.status === "error" && state.error) {
