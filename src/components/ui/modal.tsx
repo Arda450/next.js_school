@@ -22,9 +22,6 @@ export const Modal = ({
   description,
   children,
 }: ModalProps) => {
-  // this router is needed so that we can handle whenever the user
-  // clicks the close button or clicks somewhere outside the modal range
-  // since we are on a different route, we need to use the router to handle this
   const router = useRouter();
 
   return (

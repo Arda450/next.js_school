@@ -19,7 +19,7 @@ export default function Header() {
         <SidebarTrigger className="ml-4" />
         <div className="md:flex items-center gap-2 px-4">
           <Separator orientation="vertical" className="mr-2 h-8" />
-          <span className="hidden lg:inline">
+          <span className="hidden lg:inline font-medium text-sm bg-primary/20 px-3 py-1.5 rounded-md transition-colors">
             Welcome, {session?.user?.username || "Guest"}
           </span>
         </div>

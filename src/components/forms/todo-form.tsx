@@ -313,9 +313,7 @@ export default function TodoForm({ onCancel }: TodoFormProps) {
             name="shared_with"
             render={() => (
               <FormItem>
-                <FormLabel className="text-base font-semibold">
-                  Share with Users
-                </FormLabel>
+                <FormLabel className="text-base font-semibold">Share</FormLabel>
                 <FormControl>
                   <UserSearch
                     onSelect={handleUserSelect}

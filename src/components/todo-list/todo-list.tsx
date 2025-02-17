@@ -48,8 +48,6 @@ export default function TodoList({ session }: Omit<TodoListProps, "todos">) {
     setDialogType("delete");
   };
 
-  // const displayTodos = searchQuery ? filteredTodos : [...todos, ...sharedTodos];
-
   return (
     <>
       <div className="grid gap-2 md:gap-4 mx-auto p-1">
@@ -61,11 +59,10 @@ export default function TodoList({ session }: Omit<TodoListProps, "todos">) {
           </div>
         ) : (
           filteredTodos.map((todo) => {
-            // Prüfe, ob das Todo in sharedTodos ist
             const isSharedWithMe = sharedTodos.some(
               (sharedTodo) => sharedTodo.id === todo.id
             );
-            // Prüfe, ob das Todo von mir geteilt wurde (nur für meine eigenen Todos)
+
             const isSharedByMe =
               !isSharedWithMe &&
               todo.shared_with &&
@@ -83,7 +80,6 @@ export default function TodoList({ session }: Omit<TodoListProps, "todos">) {
                 aria-label={`Todo: ${todo.title}`}
               >
                 {(isSharedWithMe || isSharedByMe) && (
-                  // shared todo icon around the user icon
                   <div className="absolute top-2 right-12 flex items-center gap-1">
                     <div
                       className={cn(

@@ -1,7 +1,7 @@
 "use client";
 
-import { Tag } from "@/types/todo"; // Importieren Sie Tag von Ihrer todo.ts
-import { X } from "lucide-react"; // Für das X-Icon
+import { Tag } from "@/types/todo"; // Importiert tags von todo.ts
+import { X } from "lucide-react";
 import { useState, useEffect } from "react";
 
 interface InputWithTagsProps {
@@ -32,14 +32,12 @@ export default function InputWithTags({
     fetchTags();
   }, []);
 
-  // Funktion zum Hinzufügen eines Tags
   const handleTagSelect = (tag: Tag) => {
     if (!selectedTags.some((selected) => selected.id === tag.id)) {
       onTagsChange([...selectedTags, tag]);
     }
   };
 
-  // Funktion zum Entfernen eines Tags
   const handleRemoveTag = (tagId: string) => {
     onTagsChange(selectedTags.filter((tag) => tag.id !== tagId));
   };

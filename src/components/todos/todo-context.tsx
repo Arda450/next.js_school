@@ -22,7 +22,7 @@ type TodoContextType = {
   todos: Todo[]; // Liste aller Todos
   sharedTodos: Todo[]; // Liste aller geteilter Todos
   setSharedTodos: (todos: Todo[]) => void; // Funktion zum Setzen aller geteilter Todos
-  setTodos: (todos: Todo[]) => void; // unktion zum setzen aller todos
+  setTodos: (todos: Todo[]) => void; // Funktion zum setzen aller todos
   addTodo: (todo: Todo) => void; // funktion zum hinzufügen eines todos
   updateTodo: (todo: Todo) => void; // Funktion zum Aktualisieren eines Todos
   deleteTodo: (id: string) => Promise<TodoResponse>; // Funktion zum Löschen eines Todos
@@ -30,9 +30,9 @@ type TodoContextType = {
   searchQuery: string; // Suchbegriff
   setSearchQuery: (query: string) => void; // Setter für Suchbegriffe
   filteredTodos: Todo[]; // Gefilterte Todo-Liste
-  activeTag: string | null;
-  setActiveTag: (tag: string | null) => void;
-  clearFilters: () => void;
+  activeTag: string | null; // Aktiver Tag
+  setActiveTag: (tag: string | null) => void; // Setter für den aktiven Tag
+  clearFilters: () => void; // Funktion zum Zurücksetzen der Filter
 };
 
 // Erstellen des Kontexts
@@ -43,10 +43,9 @@ export function TodoProvider({ children }: { children: ReactNode }) {
   // State für die Todo-Liste
   const [todos, setTodos] = useState<Todo[]>([]);
   const [sharedTodos, setSharedTodos] = useState<Todo[]>([]);
-  const [activeTag, setActiveTag] = useState<string | null>(null); // NEU
-  const [searchQuery, setSearchQuery] = useState(""); // NEU: State für Suchbegriff
+  const [activeTag, setActiveTag] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  // Modifizierte filteredTodos-Logik
   const filteredTodos = useMemo(() => {
     const uniqueTodoIds = new Set();
     const uniqueFilteredTodos: Todo[] = [];
@@ -128,7 +127,7 @@ export function TodoProvider({ children }: { children: ReactNode }) {
 
       const data = await response.json();
       if (data.status === "success" && Array.isArray(data.todos)) {
-        // Prüfe Due-Status für alle Todos
+        // Prüfe due Status für alle Todos
         const todosWithDueStatus = data.todos.map((todo: Todo) =>
           checkDueStatus(todo)
         );
@@ -152,7 +151,6 @@ export function TodoProvider({ children }: { children: ReactNode }) {
     [checkDueStatus]
   );
 
-  // Funktion zum Aktualisieren eines Todos
   const updateTodo = useCallback(
     (updatedTodo: Todo) => {
       const todoWithDueStatus = checkDueStatus(updatedTodo);

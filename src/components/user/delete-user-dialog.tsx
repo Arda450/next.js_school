@@ -14,12 +14,11 @@ import {
 import { toast } from "sonner";
 import { useState } from "react";
 import { Button } from "../ui/button";
-import { Ban, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import CancelButton from "@/components/buttons/cancel-button";
-import SubmitButton from "@/components/buttons/submit-button";
 
 export default function DeleteButton() {
   const { data: session } = useSession();
@@ -103,13 +102,14 @@ export default function DeleteButton() {
             <CancelButton showIcon={true} onClick={() => {}} />
           </AlertDialogCancel>
           <AlertDialogAction asChild>
-            <SubmitButton
-              text="Confirm"
-              loadingText="Deleting..."
+            <Button
+              onClick={handleDelete}
               disabled={isLoading}
               variant="destructive"
               className="w-full"
-            />
+            >
+              {isLoading ? "Deleting..." : "Confirm"}
+            </Button>
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

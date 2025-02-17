@@ -97,7 +97,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.username = user.username;
         token.email = user.email;
         token.accessToken = user.token;
-        token.profile_image = user.profile_image; // Füge das Profilbild noch hinzu
+        token.profile_image = user.profile_image;
       }
       return token;
     },
@@ -106,11 +106,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       token,
     }: /* eslint-disable  @typescript-eslint/no-explicit-any */
     any) {
-      //console.log("session log: ", token);
-
-      // Setze die gewünschten Daten in die Session
       session.user = {
-        ...session.user, // Behalte bestehende Felder wie `email` oder `image`
+        ...session.user,
         id: token.id,
         username: token.username,
         email: token.email,
@@ -118,7 +115,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       };
       session.accessToken = token.accessToken;
 
-      return session; // Gib das Session-Objekt korrekt zurück
+      return session;
     },
   },
 });

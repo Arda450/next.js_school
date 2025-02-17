@@ -96,35 +96,35 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             title: "Personal",
             onClick: () => handleTagClick("Personal"),
             active: activeTag === "Personal",
-            disabled: !isHomePage, // Deaktiviere die Items
+            disabled: !isHomePage,
           },
           {
             id: "work",
             title: "Work",
             onClick: () => handleTagClick("Work"),
             active: activeTag === "Work",
-            disabled: !isHomePage, // Deaktiviere die Items
+            disabled: !isHomePage,
           },
           {
             id: "school",
             title: "School",
             onClick: () => handleTagClick("School"),
             active: activeTag === "School",
-            disabled: !isHomePage, // Deaktiviere die Items
+            disabled: !isHomePage,
           },
           {
             id: "low_priority",
             title: "Low priority",
             onClick: () => handleTagClick("Low Priority"),
             active: activeTag === "Low Priority",
-            disabled: !isHomePage, // Deaktiviere die Items
+            disabled: !isHomePage,
           },
           {
             id: "urgent",
             title: "Urgent",
             onClick: () => handleTagClick("Urgent"),
             active: activeTag === "Urgent",
-            disabled: !isHomePage, // Deaktiviere die Items
+            disabled: !isHomePage,
           },
         ],
       },
@@ -142,7 +142,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           {
             id: "theme",
             title: theme === "dark" ? "Theme: Light Mode" : "Theme: Dark Mode",
-            icon: theme === "dark" ? Moon : Sun, // Dynamisches Icon
+            icon: theme === "dark" ? Sun : Moon,
             onClick: handleThemeChange,
 
             content: (

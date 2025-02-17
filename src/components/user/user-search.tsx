@@ -124,12 +124,13 @@ export function UserSearch({
 
       {isLoading && <div className="absolute right-2 top-2">Loading...</div>}
       {error && <div className="text-red-500 text-sm mt-1">{error}</div>}
+
       {users.length > 0 && (
-        <ScrollArea className="absolute z-10 w-full max-h-48 mt-1 border rounded-md bg-white shadow-lg">
+        <ScrollArea className="absolute z-10 w-full max-h-48 mt-1 border rounded-md bg-background shadow-lg">
           {users.map((user) => (
             <div
               key={user.id}
-              className="p-2 hover:bg-gray-100 cursor-pointer"
+              className="px-2 py-1 hover:bg-accent hover:text-accent-foreground cursor-pointer"
               onClick={() => {
                 onSelect(user.username);
                 setSearchTerm("");

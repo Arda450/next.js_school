@@ -14,7 +14,8 @@ import { toast } from "sonner";
 import { Todo } from "@/types/todo";
 import { useTodos } from "@/components/todos/todo-context";
 import CancelButton from "@/components/buttons/cancel-button";
-import SubmitButton from "@/components/buttons/submit-button";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
 type DeleteButtonProps = {
   todo: Todo;
@@ -33,8 +34,10 @@ export default function DeleteButton({
   onCancel,
 }: DeleteButtonProps) {
   const { deleteTodo } = useTodos();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleDelete = async () => {
+    setIsLoading(true);
     try {
       const result = await deleteTodo(todo.id);
       if (result.success) {
@@ -48,6 +51,8 @@ export default function DeleteButton({
       console.error("Fehler:", error);
       toast.error("Ein unerwarteter Fehler ist aufgetreten");
       onError?.();
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -72,12 +77,14 @@ export default function DeleteButton({
             />
           </AlertDialogCancel>
           <AlertDialogAction asChild className="px-0">
-            <SubmitButton
-              text="Confirm"
-              loadingText="Deleting..."
+            <Button
+              onClick={handleDelete}
+              disabled={isLoading}
               variant="destructive"
               className="w-full"
-            />
+            >
+              {isLoading ? "Deleting..." : "Confirm"}
+            </Button>
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
