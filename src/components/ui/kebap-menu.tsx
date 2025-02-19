@@ -15,6 +15,7 @@ interface KebabMenuProps {
 }
 
 function KebabMenu({ className, onEdit, onDelete }: KebabMenuProps) {
+  // initial ist open auf false
   const [open, setOpen] = useState(false);
 
   return (
@@ -26,7 +27,10 @@ function KebabMenu({ className, onEdit, onDelete }: KebabMenuProps) {
           </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
+          {/*beim klick wird onEdit ausgeführt -> todolist.tsx*/}
           <DropdownMenuItem onClick={onEdit}>Edit Todo</DropdownMenuItem>
+
+          {/*beim klick wird onDelete ausgeführt -> todolist.tsx*/}
           <DropdownMenuItem
             onClick={() => {
               onDelete();

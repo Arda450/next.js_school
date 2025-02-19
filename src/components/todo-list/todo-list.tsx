@@ -35,11 +35,14 @@ export default function TodoList({ session }: Omit<TodoListProps, "todos">) {
 
   const handleDialogClose = () => {
     setDialogType(null);
+    // Setze selectedTodo auf null, um die Todo-Details zu löschen
     setSelectedTodo(null);
   };
 
   const handleEdit = (todo: Todo) => {
+    // wählt das todo aus und öffnet den edit dialog
     setSelectedTodo(todo);
+    // setzt den dialogType auf edit, um den edit dialog zu öffnen
     setDialogType("edit");
   };
 
@@ -103,9 +106,11 @@ export default function TodoList({ session }: Omit<TodoListProps, "todos">) {
 
                 <KebabMenu
                   className="absolute top-2 right-2 text-gray-500 hover:text-gray-900"
+                  // onEdit führt die handleEdit funktion aus und der dropdown wird geschlossen
                   onEdit={() => handleEdit(todo)}
                   onDelete={() => handleDelete(todo)}
                 />
+
                 <CardHeader>
                   <CardTitle className="text-lg font-semibold flex items-center my-3 whitespace-pre-wrap">
                     {todo.title}
@@ -188,7 +193,12 @@ export default function TodoList({ session }: Omit<TodoListProps, "todos">) {
       </div>
 
       <Dialog
+        // öffnen falls dialogType edit ist
+        // onOpenChange schließt den Dialog wenn er nicht mehr geöffnet ist
+        //  open ist true oder false
+        // onOpenChange ist eine Callback Funktion die ausgeführt wird, wenn sich der Wert von open ändert
         open={dialogType === "edit"}
+        // open wird auf false gesetzt wenn der Dialog nicht mehr geöffnet ist
         onOpenChange={(open) => !open && handleDialogClose()}
       >
         <DialogContent>
@@ -196,8 +206,10 @@ export default function TodoList({ session }: Omit<TodoListProps, "todos">) {
             <DialogTitle>Edit Todo</DialogTitle>
             <DialogDescription>Edit the details of your todo</DialogDescription>
           </DialogHeader>
+          {/* && bedeutet: beide müssen true sein.  */}
           {selectedTodo && (
             <EditTodoForm
+              // selectedTodo ist das todo das ausgewählt ist
               todo={selectedTodo}
               session={session}
               onClose={handleDialogClose}
